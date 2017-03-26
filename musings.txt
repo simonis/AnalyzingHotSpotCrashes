@@ -2,7 +2,7 @@ On Linx, SIGSEGV which are raised by the kernel (i.e. have si_code=128/SI_KERNEL
 This confuses implicit NULL checks because we can get NULL-pointer exception in places where we should actually crash!
 It seems that SIGSEGVs raised by the kernel occur for very large addresses, which are not mapped into the user space (i.e. 0xffffffffffffffff, 0xbaadbabebaadbabe)
 
-See: 
+See:
 
 os_linux_x86.cpp
 ----------------

@@ -90,6 +90,9 @@ code.terminal .hljs-title {
     z-index: 31;
     font-size: 14px;
 }
+.reveal h1, .reveal h2, .reveal h3, .reveal h4, .reveal h5, .reveal h6 {
+    text-transform: none;
+}
 
 .hljs-class .hljs-title {
     /* fix "public static class Y extends X {" such that 'Y' will be formatted the same like 'X' */
@@ -413,7 +416,7 @@ $ </span>
         <section class="demo">
 
           <section>
-            <h2>The <code style="text-transform: none;">Crash</code> example</h2>
+            <h2>The <code style="text-transform: none;">Crash</code> Example</h2>
 
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="java" data-trim="true" data-noescape="true" style="height:100%">
@@ -456,7 +459,7 @@ Current thread (0x00007fd0c0019800):  JavaThread "main" \
           </section>
 
           <section>
-            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Native/Mixed Stack trace</h2>
+            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Native/Mixed Stack Trace</h2>
 
             <!-- the following data is from data/slide1/hs_err_pid4631.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
@@ -483,7 +486,7 @@ C  [libpthread.so.0+0x8182]  <span class="fragment highlight-border" data-fragme
           </section>
 
           <section>
-            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Java Stack trace</h2>
+            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Java Stack Trace</h2>
 
             <!-- the following data is from data/slide1/hs_err_pid4631.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
@@ -500,7 +503,7 @@ v  ~StubRoutines::call_stub
           </section>
 
           <section>
-            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Register mapping</h2>
+            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Register Mapping</h2>
 
             <!-- the following data is from data/slide1/hs_err_pid4631.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
@@ -563,33 +566,13 @@ Instructions: (<span class="fragment highlight-border" data-fragment-index="1">p
             </pre>
           </section>
 
-          <section class="demo">
-            <h2><code style="text-transform: none;">hs_err.log</code>: Stack/Instructions</h2>
-
-            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
-            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
-              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
-              </code>
-            </pre>
-          </section>
-
-          <section class="demo">
-            <h2>Native/Mixed Stack trace</h2>
-
-            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
-            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
-              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
-              </code>
-            </pre>
-          </section>
-
         </section>
 
         <section class="demo">
 
           <section class="demo">
 
-            <h2>How are <code style="text-transform: none;">hs_err.log</code> files generated?</h2>
+            <h2>Generating <code style="text-transform: none;">hs_err.log</code> Files</h2>
 
 <table class="calling_hirarchy">
   <tr>
@@ -676,7 +659,7 @@ Instructions: (<span class="fragment highlight-border" data-fragment-index="1">p
 
           <section class="demo">
 
-            <h2>How are <code style="text-transform: none;">hs_err</code> files generated?</h2>
+            <h2>Generating <code style="text-transform: none;">hs_err</code> Files</h2>
 
             <div style="display:inline-block; width:90%; text-align: left;">
               <p>Creating the <code>hs_err</code> file is not trivial:</p>
@@ -745,7 +728,7 @@ Compressed class space size: 1073741824 Address: 0x0000000100000000</span>
 
           <section>
 
-            <h2>Crashes in the interpreter</h2>
+            <h2>Crashes in the Interpreter</h2>
 
           <div style="width: 100%">
             <div style="float: left; width: 60%">
@@ -802,7 +785,7 @@ Code:
 
           <section>
 
-            <h2>Crashes in the interpreter</h2>
+            <h2>Crashes in the Interpreter</h2>
 
             <!-- the following data is from data/slide2/hs_err_pid10985.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
@@ -851,7 +834,7 @@ $ java -Xmx20m -XX:MaxMetaspaceSize=6m org.simonis.CrashOOM
 
           <section>
 
-            <h2>Out of Memory - let it crash!</h2>
+            <h2>Out of Memory - Let it Crash!</h2>
 
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
@@ -1127,7 +1110,7 @@ Resolving klass org/simonis/Crash5$X at 16
 
           <section class="demo">
 
-            <h2>Debugging the crash</h2>
+            <h2>Debugging the Crash</h2>
 
             <!-- the following data is from data/slide4/hs_err_pid31451.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
@@ -1319,7 +1302,7 @@ public class Crash6 {
 
           <section class="demo">
 
-            <h2>Serviceability Agent - dump classes from core</h2>
+            <h2>Serviceability Agent - Dump Classes from Core</h2>
 
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="">
@@ -1344,6 +1327,14 @@ Resolving klass org/simonis/Crash6$X at 33
 </span>              </code>
             </pre>
           </section>
+
+        </section>
+
+        <section>
+
+          <h3 style="text-transform: none;"><a href="https://github.com/simonis/AnalyzingHotSpotCrashes">https://github.com/simonis/AnalyzingHotSpotCrashes</a></h3>
+
+          <h3 style="text-transform: none;"><a href="https://rawgit.com/simonis/AnalyzingHotSpotCrashes/master/analyzingHotSpotCrashes.xhtml#/">https://rawgit.com/simonis/AnalyzingHotSpotCrashes/master/analyzingHotSpotCrashes.xhtml</a></h3>
 
         </section>
 
