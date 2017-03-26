@@ -1,0 +1,5 @@
+java -Xmx20m -XX:MaxMetaspaceSize=6m org.simonis.CrashOOM 1000
+java -Xmx20m -XX:MaxMetaspaceSize=6m -XX:+CrashOnOutOfMemoryError org.simonis.CrashOOM 1000
+jhsdb hsdb --exe /share/output-jdk9-dev-dbg/images/jdk/bin/java --core core
+java --add-modules jdk.hotspot.agent --add-exports jdk.hotspot.agent/sun.jvm.hotspot.classfile=ALL-UNNAMED --add-exports jdk.hotspot.agent/sun.jvm.hotspot.oops=ALL-UNNAMED --add-exports jdk.hotspot.agent/sun.jvm.hotspot.runtime=ALL-UNNAMED --add-exports jdk.hotspot.agent/sun.jvm.hotspot.tools=ALL-UNNAMED org.simonis.ClassStatistics /share/output-jdk9-dev-dbg/images/jdk/bin/java core | less
+java --add-modules jdk.hotspot.agent --add-exports jdk.hotspot.agent/sun.jvm.hotspot.classfile=ALL-UNNAMED --add-exports jdk.hotspot.agent/sun.jvm.hotspot.oops=ALL-UNNAMED --add-exports jdk.hotspot.agent/sun.jvm.hotspot.runtime=ALL-UNNAMED --add-exports jdk.hotspot.agent/sun.jvm.hotspot.tools=ALL-UNNAMED org.simonis.ClassStatistics /share/output-jdk9-dev-dbg/images/jdk/bin/java core | grep CrashOOM | wc

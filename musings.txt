@@ -1,0 +1,20 @@
+On Linx, SIGSEGV which are raised by the kernel (i.e. have si_code=128/SI_KERNEL) seem to always have si_addr=0.
+This confuses implicit NULL checks because we can get NULL-pointer exception in places where we should actually crash!
+It seems that SIGSEGVs raised by the kernel occur for very large addresses, which are not mapped into the user space (i.e. 0xffffffffffffffff, 0xbaadbabebaadbabe)
+
+See: 
+
+os_linux_x86.cpp
+----------------
+
+#ifndef AMD64
+    // Halt if SI_KERNEL before more crashes get misdiagnosed as Java bugs
+    // This can happen in any running code (currently more frequently in
+    // interpreter code but has been seen in compiled code)
+    if (sig == SIGSEGV && info->si_addr == 0 && info->si_code == SI_KERNEL) {
+      fatal("An irrecoverable SI_KERNEL SIGSEGV has occurred due "
+            "to unstable signal handling in this distribution.");
+    }
+#endif // AMD64
+
+http://unix.stackexchange.com/questions/71240/sigaction7-semantics-of-siginfo-ts-si-code-member

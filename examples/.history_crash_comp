@@ -1,0 +1,3 @@
+java -Xbatch -XX:-DoEscapeAnalysis org.simonis.Crash5
+java -XX:+ReplayCompiles -XX:ReplayDataFile=replay_pid31451.log
+java -XX:+ReplayCompiles -XX:-DoEscapeAnalysis -XX:ReplayDataFile=replay_pid31451.log

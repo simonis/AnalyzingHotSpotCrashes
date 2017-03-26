@@ -1,0 +1,43 @@
+
+Opening slide
+=============
+
+- What is a VM crash?
+- It is really a catastrophic failure of the VM - no way to recover.
+- The best we can do is to collect as much data as possible in order to analyze/reproduce the problem
+- Notice that this is different from a Java program error like an unhandled excetion.
+- The latte will still shut down the VM, but it will not compromise its integrity
+- If you adhere to the Java standard (i.e. no Unsafe :) the VM should never crash (JNI is an exception here of course )
+
+
+Crash
+=====
+
+- Ever seen this: you run a simple Java program and suddenly BOOM
+- Who of you has ever seen this in his logs (or found hs_err files in the file system)?
+ 
+- So this is the crash summary you see on the console/log file
+- It tells you:
+  - what happened
+  - where it happened
+  - is there a core file and if yes where is it
+  - where's the full crash report
+    - this can be tricky (look at /proc/sys/kernel/core_pattern)
+    - check ulimit
+
+
+How are hs_err files generated
+==============================
+
+- if the HotSpot detects an inconsistent state or its integrity is compromised
+  - because of unexpected signals (keep in mind that HotSpot heavily uses signals itself!)
+  - because of failed assertions/guarantees (effectively assertions in the product build)
+  - because there's not enough native memory
+
+- use SafeFetch
+
+Native (mixed) Stack Trace
+
+Java Stack Trace
+
+Disassembly (hs_dis)

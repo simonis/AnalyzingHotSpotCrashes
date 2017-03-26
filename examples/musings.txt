@@ -1,0 +1,58 @@
+nmethod
+  |
+CompiledMethod  
+  Method* method() { return _method; }
+  _method (Method)
+
+    InstanceKlass* method_holder() { return constants()->pool_holder(); }
+    ConstantPool*  constants()     { return constMethod()->constants(); }
+    ConstMethod*   constMethod()   { return _constMethod; }
+    _constMethod (ConstMethod)
+
+      ConstantPool* constants()    { return _constants; }
+      _constants (ConstantPool)
+
+        InstanceKlass* pool_holder() { return _pool_holder; }
+        _pool_holder (InstanceKlass)
+
+
+https://bugs.openjdk.java.net/browse/JDK-8055008
+Clean up code that saves the previous versions of redefined classes
+
+For class redefinition, the old methods point to the old constant pool which points to the original class. The scratch class created during redefinition points to the old methods and old constant pool, and the original class points to the new (merged) constant pool and new methods. The pointers are such after class redefinition:
+
+original_class->new_cpool->original_class
+original_class->new_methods->new_cpool->original_class (this is good!)
+
+scratch_class->old_cpool->original_class
+scratch_class->old_methods->old_cpool->original_class (this is inconsistent but necessary [1])
+
+[1] there's a giant comment why this is necessary in jvmtiRedefineClasses. This is actually something we want to change, so different RFE later.
+
+If any of the old_methods are still running when we redefine the classes, we mark them "on_stack" during class unloading so that we don't deallocate the metadata for them. When we mark them on_stack we also mark the old_cpool on_stack because the old methods need the old_cpool. During class redefinition, we put the scratch_class on the deallocation list, but we don't actually deallocate it until all of the old methods are no longer running.
+
+InstanceKlass::on_stack() { return constants->on_stack(); }
+
+The reason for this is because InstanceKlass is a reliable hook for deallocating metadata in the no-permgen world. With PermGen, I believe scratch_class would have been collected before the old methods so we needed to save running old EMCP methods on the PreviousVersionNode (list) as weak references to hold pointers to them. The pointers to the old_methods are held mainly so that we can set breakpoints in EMCP methods - methods that are equivalent except they point to a merged constant pool (but they don't). If someone sets a breakpoint in a new method and there's an equivalent method before redefinition still running, they expect a breakpoint in the equivalent method.
+
+With no-Permgen, we should use scratch_class to link to the previous versions to hold the old_methods which will make this simpler, more explicit, and remove the PreviousVersionNode structure(s). 
+
+
+https://bugs.openjdk.java.net/browse/JDK-4633227
+JDI spec: usage of methods implementing HotSwap feature needs clarification
+
+
+http://www.oracle.com/technetwork/java/javase/jvmdi-spec-135507.html#RedefineClasses
+
+https://docs.oracle.com/javase/7/docs/platform/jvmti/jvmti.html#RedefineClasses
+https://docs.oracle.com/javase/7/docs/platform/jvmti/jvmti.html#obsoleteMethods
+
+
+
+In GraphKit::builtin_throw() there's an optimization for OmitStackTraceInFastThrow
+which takes a preallcoated exception (without stack trace) instead of deoptimizing.
+
+Try to use GraphKit::new_instance to allcoate a new Exception every time 
+  - and call it's constructor to fill in the stack trace 
+  - or otherwise remember/save the current method/bci
+instead.

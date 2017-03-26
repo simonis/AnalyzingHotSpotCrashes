@@ -1,0 +1,305 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Creator: fig2dev Version 3.2 Patchlevel 5e -->
+<!-- CreationDate: Wed Mar 11 19:34:16 2015 -->
+<!-- Magnification: 1.050 -->
+<svg	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink"
+	width="12.9in" height="5.2in"
+	viewBox="220 707 15499 6191">
+<g style="stroke-width:.025in; fill:none">
+<!-- Line: box -->
+<rect x="236" y="708" width="15401" height="6188" rx="0" 
+style="stroke:#000000;stroke-width:0;
+stroke-linejoin:miter; stroke-linecap:butt;
+fill:#ffffff;
+"/>
+<!-- Line -->
+<polyline points="5196,4346
+5905,4346
+5905,6755
+" style="stroke:#0000ff;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 5905 4346 - 5905 6881-->
+<polygon points="5874 6709
+5905 6804
+5937 6709
+5874 6709
+
+" style="stroke:#0000ff;stroke-width:48;stroke-miterlimit:8;
+fill:#0000ff;"/>
+<!-- Line -->
+<polyline points="6377,2125
+6377,4157
+5290,4157
+" style="stroke:#0000ff;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 6377 4157 - 5165 4157-->
+<polygon points="5337 4125
+5243 4157
+5337 4188
+5337 4125
+
+" style="stroke:#0000ff;stroke-width:48;stroke-miterlimit:8;
+fill:#0000ff;"/>
+<!-- Line -->
+<polyline points="6614,1181
+6614,1464
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 6614 1181 - 6614 1590-->
+<polygon points="6582 1418
+6614 1512
+6645 1418
+6582 1418
+
+" style="stroke:#000000;stroke-width:48;stroke-miterlimit:8;
+fill:#000000;"/>
+<!-- Text -->
+<text xml:space="preserve" x="6236" y="1133" fill="#000000"  font-family="Sans" font-style="normal" font-weight="bold" font-size="300" text-anchor="start">BCP</text>
+<!-- Line -->
+<polyline points="6377,6614
+6755,6614
+" style="stroke:#0000ff;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Arrowhead on XXXpoint 6377 6614 - 6881 6614-->
+<polygon points="6709 6645
+6804 6614
+6709 6582
+6709 6645
+
+" style="stroke:#0000ff;stroke-width:48;stroke-miterlimit:8;
+fill:#0000ff;"/>
+<!-- Line: box -->
+<rect x="3307" y="1653" width="944" height="472" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="4251" y="1653" width="944" height="472" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="5196" y="1653" width="944" height="472" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="7086" y="1653" width="944" height="472" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="9921" y="1653" width="944" height="472" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="6141" y="1653" width="944" height="472" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3307,5433
+5196,5433
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3307,5905
+5196,5905
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3307,4960
+5196,4960
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3307,4488
+5196,4488
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3307,3543
+5196,3543
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3307,4015
+5196,4015
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="8976" y="1653" width="944" height="472" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="8031" y="1653" width="944" height="472" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3307,6377
+3307,6850
+5196,6850
+5196,6377
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="6850,4015
+10866,4015
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="6850,4488
+10866,4488
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="6850,4960
+10866,4960
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="6850,5433
+10866,5433
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="6850,5905
+10866,5905
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="6850,6377
+10866,6377
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="6850,3543
+6850,2598
+10866,2598
+10866,3543
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="6850,3070
+10866,3070
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="6850" y="3543" width="4015" height="3307" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line -->
+<polyline points="3307,3070
+5196,3070
+" style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Line: box -->
+<rect x="3307" y="2598" width="1889" height="3779" rx="0" 
+style="stroke:#000000;stroke-width:16;
+stroke-linejoin:miter; stroke-linecap:butt;
+"/>
+<!-- Text -->
+<text xml:space="preserve" x="236" y="1133" fill="#000000"  font-family="Sans" font-style="normal" font-weight="bold" font-size="300" text-anchor="start">Bytecode Pointer</text>
+<!-- Text -->
+<text xml:space="preserve" x="236" y="2078" fill="#000000"  font-family="Sans" font-style="normal" font-weight="bold" font-size="300" text-anchor="start">Bytecode Stream</text>
+<!-- Text -->
+<text xml:space="preserve" x="7228" y="2031" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">imul</text>
+<!-- Text -->
+<text xml:space="preserve" x="9118" y="2031" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">goto</text>
+<!-- Text -->
+<text xml:space="preserve" x="6330" y="2031" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">dup</text>
+<!-- Text -->
+<text xml:space="preserve" x="236" y="2976" fill="#000000"  font-family="Sans" font-style="normal" font-weight="bold" font-size="300" text-anchor="start">TemplateTable</text>
+<!-- Text -->
+<text xml:space="preserve" x="3448" y="5763" fill="#000000"  font-family="Sans" font-style="normal" font-weight="bold" font-size="300" text-anchor="start">...</text>
+<!-- Text -->
+<text xml:space="preserve" x="3354" y="4866" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">0xcafebabe</text>
+<!-- Text -->
+<text xml:space="preserve" x="3354" y="4393" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">0x012303e4</text>
+<!-- Text -->
+<text xml:space="preserve" x="3354" y="3921" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">0x012302d0</text>
+<!-- Text -->
+<text xml:space="preserve" x="3354" y="3448" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">0x012300ff</text>
+<!-- Text -->
+<text xml:space="preserve" x="3354" y="2976" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">0x01230000</text>
+<!-- Text -->
+<text xml:space="preserve" x="3354" y="5338" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">0x01234ab0</text>
+<!-- Text -->
+<text xml:space="preserve" x="3354" y="2031" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">iload</text>
+<!-- Text -->
+<text xml:space="preserve" x="4299" y="2031" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">iload</text>
+<!-- Text -->
+<text xml:space="preserve" x="5338" y="2031" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">iadd</text>
+<!-- Text -->
+<text xml:space="preserve" x="8173" y="2031" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">iflt</text>
+<!-- Text -->
+<text xml:space="preserve" x="10110" y="2031" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">ret</text>
+<!-- Text -->
+<text xml:space="preserve" x="3354" y="6708" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">0x0badbabe</text>
+<!-- Text -->
+<text xml:space="preserve" x="2740" y="6708" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">255</text>
+<!-- Text -->
+<text xml:space="preserve" x="3448" y="6236" fill="#000000"  font-family="Sans" font-style="normal" font-weight="bold" font-size="300" text-anchor="start">...</text>
+<!-- Text -->
+<text xml:space="preserve" x="6897" y="6283" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">movabs $0x7f3734, %r10</text>
+<!-- Text -->
+<text xml:space="preserve" x="6897" y="4393" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">add    $0x8, $rsp</text>
+<!-- Text -->
+<text xml:space="preserve" x="6897" y="3921" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">mov    (%rsp), %edx</text>
+<!-- Text -->
+<text xml:space="preserve" x="6897" y="4866" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">add    %edx, %eax</text>
+<!-- Text -->
+<text xml:space="preserve" x="6897" y="5338" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">movzbl 0x1(%r13), %ebx</text>
+<!-- Text -->
+<text xml:space="preserve" x="6897" y="5811" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">inc    %r13</text>
+<!-- Text -->
+<text xml:space="preserve" x="6897" y="2929" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">mov    (%rsp), %eax</text>
+<!-- Text -->
+<text xml:space="preserve" x="6897" y="3401" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">add    $0x8, $rsp</text>
+<!-- Text -->
+<text xml:space="preserve" x="6897" y="6755" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">jmpq   *(%r10, %ebx, 8)</text>
+<!-- Text -->
+<text xml:space="preserve" x="2929" y="2976" fill="#000000"  font-family="Monospace" font-style="normal" font-weight="bold" font-size="280" text-anchor="start">69</text>
+<!-- Text -->
+<text xml:space="preserve" x="11149" y="2976" fill="#000000"  font-family="Sans" font-style="italic" font-weight="bold" font-size="300" text-anchor="start">// pop arg1</text>
+<!-- Text -->
+<text xml:space="preserve" x="11149" y="3921" fill="#000000"  font-family="Sans" font-style="italic" font-weight="bold" font-size="300" text-anchor="start">// pop arg2</text>
+<!-- Text -->
+<text xml:space="preserve" x="11149" y="5811" fill="#000000"  font-family="Sans" font-style="italic" font-weight="bold" font-size="300" text-anchor="start">// inc BCP</text>
+<!-- Text -->
+<text xml:space="preserve" x="11149" y="5338" fill="#000000"  font-family="Sans" font-style="italic" font-weight="bold" font-size="300" text-anchor="start">// load BCP+1</text>
+<!-- Text -->
+<text xml:space="preserve" x="11149" y="4866" fill="#000000"  font-family="Sans" font-style="italic" font-weight="bold" font-size="300" text-anchor="start">// arg1 += arg2</text>
+<!-- Text -->
+<text xml:space="preserve" x="11149" y="6283" fill="#000000"  font-family="Sans" font-style="italic" font-weight="bold" font-size="300" text-anchor="start">// load TemplateTable</text>
+<!-- Text -->
+<text xml:space="preserve" x="11149" y="6755" fill="#000000"  font-family="Sans" font-style="italic" font-weight="bold" font-size="300" text-anchor="start">// jmp TemplateTable[*BCP]</text>
+</g>
+</svg>

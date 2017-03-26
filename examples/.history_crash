@@ -1,0 +1,3 @@
+jcmd -l
+jcmd 1111 VM.info
+java -Xmx20m org.simonis.Crash

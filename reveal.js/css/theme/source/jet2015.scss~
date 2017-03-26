@@ -1,0 +1,114 @@
+/**
+ * JET2015 theme for reveal.js.
+ * Author: Volker Simonis
+ * Derived from 'moon.scss', the "Solarized Dark theme" by Achim Staebler and 
+ * 'black.scss' by Hakim El Hattab
+ */
+
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+
+
+// Include theme-specific fonts
+@import url(../../lib/font/robotocondensed/robotocondensed.css);
+@import url(../../lib/font/robotomono/robotomono.css);
+
+// Main text
+$mainFont: 'Roboto Condensed', 'sans-serif';
+
+// pre/code monospaced text
+$monospacedFont: 'Roboto Mono', monospaced;
+$preCodeMaxHeight: 95%;
+
+// Headings
+$headingFont: 'Roboto Condensed', 'sans-serif';
+
+/**
+ * Solarized colors by Ethan Schoonover
+ */
+html * {
+	color-profile: sRGB;
+	rendering-intent: auto;
+}
+
+// Solarized colors
+$base03:    #002b36;
+$base02:    #073642;
+$base01:    #586e75;
+$base00:    #657b83;
+$base0:     #839496;
+$base1:     #93a1a1;
+$base2:     #eee8d5;
+$base3:     #fdf6e3;
+$yellow:    #b58900;
+$orange:    #cb4b16;
+$red:       #dc322f;
+$magenta:   #d33682;
+$violet:    #6c71c4;
+$blue:      #268bd2;
+$cyan:      #2aa198;
+$green:     #859900;
+
+// Override theme settings (see ../template/settings.scss)
+$mainColor: $base1;
+$headingColor: $base2;
+$backgroundColor: $base03;
+$linkColor: $blue;
+$linkColorHover: lighten( $linkColor, 20% );
+$selectionBackgroundColor: $magenta;
+
+$headingTextShadow: none;
+$headingLetterSpacing: normal;
+$headingTextTransform: uppercase;
+$headingFontWeight: 400;
+
+$heading1Size: 2.5em;
+$heading2Size: 1.6em;
+$heading3Size: 1.3em;
+$heading4Size: 1.0em;
+
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------
+
+// Override some settings from the default theme
+
+.reveal blockquote {
+	padding: 5px 15px;
+	width: auto;
+	display: inline-block;
+	clear: both;
+	border-radius: 0.5em;
+	box-shadow: rgba(0,0,0,0.8) 0 0 0.5em;
+}
+
+.reveal blockquote footer {
+	text-align: left;
+	font-size: 60%;
+	font-style: normal;
+}
+
+.reveal blockquote footer cite {
+	font-style: normal;
+}
+
+.reveal pre {
+	display: inline-block;
+	clear: both;
+	width: auto;
+	max-width: 100%;
+	padding: 5px 15px;
+	border-radius: 0.5em;
+	box-shadow: rgba(0,0,0,0.8) 0 0 0.5em;
+}
+
+.reveal pre code {
+	border-radius: 0.5em;
+	box-shadow: rgba(0,0,0,0.8) 0 0 0.5em;
+}
+

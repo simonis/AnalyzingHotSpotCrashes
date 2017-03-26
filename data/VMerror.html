@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><table class="calling_hirarchy">
+  <tr>
+    <td colspan="6" class="functionCall  indent_level_3">
+      <code>&lt;signal handler&gt;</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="11">&nbsp;</td>
+    <td colspan="5" class="functionCall  indent_level_4">
+    <code>signalHandler(sig=11, info=0x7ffff7fda070, uc=0x7ffff7fd9f40)</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="10">&nbsp;</td>
+    <td colspan="4" class="functionCall  indent_level_5">
+    <code>JVM_handle_linux_signal(sig=11, info=0x7ffff7fda070, abort_if_unrecognized=1)</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="9">&nbsp;</td>
+    <td colspan="3" class="functionCall  indent_level_6">
+    <code>VMError::report_and_die(sig=11, pc=0x7ffff668a17a &lt;MemoryAccess::put&gt;)</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="8">&nbsp;</td>
+    <td colspan="2" class="functionCall  indent_level_7">
+    <code>VMError::report(stream=0x7ffff71aa9e0 &lt;VMError::log&gt;, _verbose=true)</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="7">&nbsp;</td>
+    <td colspan="1" class="functionCall  indent_level_8">
+    <code>print_native_stack(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>print_stack_trace(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>os::print_register_info(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>Universe::heap()-&gt;print_on_error(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>os::print_dll_info(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>Arguments::print_on(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>...</code>
+    </td>
+  </tr>
+</table>

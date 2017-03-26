@@ -1,0 +1,14 @@
+<calling_hirarchy>
+<call level='3' type='functionCall '><code>&lt;signal handler&gt;</code></call>
+<call level='4' type='functionCall '><code>signalHandler(sig=11, info=0x7ffff7fda070, uc=0x7ffff7fd9f40)</code></call>
+<call level='5' type='functionCall '><code>JVM_handle_linux_signal(sig=11, info=0x7ffff7fda070, abort_if_unrecognized=1)</code></call>
+<call level='6' type='functionCall '><code>VMError::report_and_die(sig=11, pc=0x7ffff668a17a &lt;MemoryAccess::put&gt;)</code></call>
+<call level='7' type='functionCall '><code>VMError::report(stream=0x7ffff71aa9e0 &lt;VMError::log&gt;, _verbose=true)</code></call>
+<call level='8' type='functionCall '><code>print_native_stack(...)</code></call>
+<call level='8' type='functionCall '><code>print_stack_trace(...)</code></call>
+<call level='8' type='functionCall '><code>os::print_register_info(...)</code></call>
+<call level='8' type='functionCall '><code>Universe::heap()-&gt;print_on_error(...)</code></call>
+<call level='8' type='functionCall '><code>os::print_dll_info(...)</code></call>
+<call level='8' type='functionCall '><code>Arguments::print_on(...)</code></call>
+<call level='8' type='functionCall '><code>...</code></call>
+</calling_hirarchy>

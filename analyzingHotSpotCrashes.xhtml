@@ -1,0 +1,1447 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
+  <head>
+    <meta charset="utf-8" />
+
+    <title>Analyzing HotSpot Crashes</title>
+
+    <meta name="description" content="Describe how to detect and analyze different classes of HotSpot crashes." />
+    <meta name="author" content="Volker H. Simonis" />
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui" />
+
+    <link rel="stylesheet" href="reveal.js/css/reveal.css" />
+    <link rel="stylesheet" href="reveal.js/css/theme/jbreak2016.css" id="theme" />
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="reveal.js/lib/css/monokai_sublime.css" />
+
+  <style type="text/css">
+.scrollable {
+    bottom: 0px;
+    overflow-y: auto  !important;
+    overflow-x: hidden !important;
+}
+
+.reveal .slides > section.demo,
+.reveal .slides > section > section.demo {
+    padding: 0;
+    height: 100%;
+}
+
+.reveal .big {
+    font-size: .8em;
+    line-height: 1.3em;
+}
+
+.reveal pre.console {
+    background-color: black;
+    color: #00ff00;
+}
+
+code.terminal .hljs-title {
+    color: #00ff00;
+}
+
+.reveal pre.noshadow {
+    border-radius: 0;
+    box-shadow: unset;
+}
+
+.reveal pre code {
+    max-height: 100%;
+}
+.bold {
+    font-weight: bold;
+}
+
+.reveal .outline_white {
+    color: white;
+    text-shadow:
+        -2px -2px 0 #000,
+         2px -2px 0 #000,
+        -2px  2px 0 #000,
+         2px  2px 0 #000;
+    min-height: 1.1em;
+    text-align: center;
+}
+.reveal .outline_black {
+    color: black;
+    text-shadow:
+        -2px -2px 0 #fff,
+         2px -2px 0 #fff,
+        -2px  2px 0 #fff,
+         2px  2px 0 #fff;
+    min-height: 1.1em;
+    text-align: center;
+}
+
+.reveal .slide-number {
+    position: fixed;
+    display: block;
+    left: 15px;
+    bottom: 15px;
+    opacity: 0.9;
+    z-index: 31;
+    font-size: 14px;
+}
+
+.hljs-class .hljs-title {
+    /* fix "public static class Y extends X {" such that 'Y' will be formatted the same like 'X' */
+    color: #A6E22E;
+    font-style: italic;
+}
+
+mark {
+    color: black;
+    background-color: yellow;
+    border-radius: 10px;
+}
+mark.orange {
+    color: black;
+    background-color: orange;
+    border-radius: 10px;
+}
+mark.border {
+    color: inherit;
+    background-color: inherit;
+    border: 5px solid #1B91FF;
+    border-radius: 10px;
+}
+
+.reveal .slides section .fragment.highlight-border, .reveal .slides section .fragment.highlight-current-border {
+  opacity: 1;
+  visibility: visible;
+}
+.reveal .slides section .fragment.highlight-border.visible {
+  border: 5px solid #1B91FF;
+  border-radius: 10px;
+}
+.reveal .slides section .fragment.highlight-current-border.current-fragment {
+  border: 5px solid #1B91FF;
+  border-radius: 10px;
+}
+  table.calling_hirarchy {
+/*    font-family: monospace, arial, helvetica, sans-serif; */
+/*    background-color: #ffffff; */
+    font-size: smaller;
+    border-collapse: collapse;
+    margin: 0px auto;
+    padding: 2px;
+    width: auto;
+    overflow: auto;
+    border: none;
+  }
+
+  table.calling_hirarchy tr {
+    border: none;
+  }
+
+  table.calling_hirarchy td {
+    padding: 4px;
+/*    font-family: monospace; */
+  }
+
+  td.indent_level_0 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #a0a0a0;
+  }
+  td.indent_level_1 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #a8a8a8;
+  }
+  td.indent_level_2 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #b0b0b0;
+  }
+  td.indent_level_3 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #b8b8b8;
+  }
+  td.indent_level_4 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #c0c0c0;
+  }
+  td.indent_level_5 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #c8c8c8;
+  }
+  td.indent_level_6 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #d0d0d0;
+  }
+  td.indent_level_7 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #d8d8d8;
+  }
+  td.indent_level_8 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #e0e0e0;
+  }
+  td.indent_level_9 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #e8e8e8;
+  }
+  td.indent_level_10 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #f0f0f0;
+  }
+  td.indent_level_11 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #f8f8f8;
+  }
+  td.indent_level_12 {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #ffffff;
+  }
+  td.functionCall {
+/*    font-weight: bold; */
+    color: darkblue;
+  }
+  td.javaCall {
+    font-weight: bold;
+    color: darkgreen;
+  }
+  td.comment {
+    font-style: italic;
+    color: maroon;
+  }
+  td.highlight {
+    border-style: solid;
+    border-width: 2px;
+    background-color: #a0ffa0;
+  }
+  table.calling_hirarchy td[rowspan] {
+    border-style: none;
+    border-width: 0;
+    border-left: dotted;
+    border-left-width: 2px;
+  }
+  </style>
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'reveal.js/css/print/pdf.css' : 'reveal.js/css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+    <!--[if lt IE 9]>
+    <script src="reveal.js/lib/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!--
+      Issue #1105: Keyboard shortcut to skip forward/back over fragments #1173
+      https://github.com/hakimel/reveal.js/pull/1173
+    -->
+  </head>
+
+<!--
+;; select this code and do 'M-x eval-region'
+(defun make-fragment (p1 p2)
+  "Wraps the selection into 'fragment' <span>s."
+  (interactive "r")
+  (setq inputStr (buffer-substring-no-properties p1 p2))
+  (setq inputStr (replace-regexp-in-string "&" "&amp;" inputStr))
+  (setq inputStr (replace-regexp-in-string "<" "&lt;" inputStr))
+  (setq inputStr (replace-regexp-in-string ">" "&gt;" inputStr))
+  (setq resultStr (concat "<span class=\"fragment\">" (concat inputStr "</span>")))
+  (delete-region p1 p2)
+  (insert resultStr)
+)
+
+(global-set-key (kbd "C-f") 'make-fragment)
+;; revert key-binding
+;; (global-set-key (kbd "C-f") 'forward-char)
+
+;; (vhs) The following is required to make 'C-c C-t' insert <code> tags without
+;; newlines. 'sgml-tag-alist' is the "file-local" version of 'html-tag-alist'
+(add-to-list 'html-tag-alist '("code"))
+(add-to-list 'sgml-tag-alist '("code"))
+
+-->
+
+  <body>
+
+    <div class="reveal">
+
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+
+        <section>
+          <h1>Analyzing HotSpot Crashes<br/></h1>
+          <p>
+            <small>Volker Simonis [Фолкер Симонис], SAP / <a href="mailto:volker.simonis@gmail.com">volker.simonis@gmail.com</a></small>
+          </p>
+        </section>
+
+<!--
+
+
+State of /share/OpenJDK/jdk9-dev before we started with JBreak2017:
+
+simonis@simonis:/share/OpenJDK/jdk9-dev$ bash common/bin/hgforest.sh id
+# Repositories:  . corba jaxp jaxws langtools jdk hotspot nashorn
+                    .:   cd . && hg id
+                corba:   cd corba && hg id
+                 jaxp:   cd jaxp && hg id
+                jaxws:   cd jaxws && hg id
+            langtools:   cd langtools && hg id
+                  jdk:   cd jdk && hg id
+              hotspot:   cd hotspot && hg id
+              nashorn:   cd nashorn && hg id
+                    .:   688a3863c00e tip
+              hotspot:   f3b3d77a1751 tip
+                corba:   a545f54babfa tip
+              nashorn:   6f5bf136f6c9 tip
+                 jaxp:   48fa77af1532 tip
+                jaxws:   9b9918656c97 tip
+            langtools:   37c0e34e835c tip
+                  jdk:   ee8923e260c7 tip
+
+
+/share/output-jdk8u-dbg/images/j2sdk-image/bin/java -XX:MaxMetaspaceSize=6m -XX:+CrashOnOutOfMemoryError -cp /media/sf_C_DRIVE/Users/D046063/public_html/hotspot/JBreak2017/git/examples/bin org.simonis.Crash3 1000
+
+/share/output-jdk8u-dbg/images/j2sdk-image/bin/java -cp /share/output-jdk8u-dbg/images/j2sdk-image/lib/sa-jdi.jar sun.jvm.hotspot.HSDB /share/output-jdk8u-dbg/images/j2sdk-image/bin/java core.4262
+
+Tools -> Class Browser -> Search for "org.simonis" -> two versions of org.simonis.Crash3
+
+
+/share/output-jdk9-dev-dbg/images/jdk/bin/java -Dsun.jvm.hotspot.runtime.VM.disableVersionCheck  -m jdk.hotspot.agent/sun.jvm.hotspot.HSDB
+
+
+/share/output-jdk9-dev-dbg/images/jdk/bin/java -XX:MaxMetaspaceSize=6m -XX:+CrashOnOutOfMemoryError -cp /media/sf_C_DRIVE/Users/D046063/public_html/hotspot/JBreak2017/git/examples/bin org.simonis.Crash3 1000
+
+/share/output-jdk9-dev-dbg/images/jdk/bin/jhsdb hsdb - -exe /share/output-jdk9-dev-dbg/images/jdk/bin/java - -core core.6780
+
+/share/output-jdk9-dev-dbg/images/jdk/bin/javac - -add-modules jdk.hotspot.agent - -add-exports jdk.hotspot.agent/sun.jvm.hotspot.classfile=ALL-UNNAMED - -add-exports jdk.hotspot.agent/sun.jvm.hotspot.oops=ALL-UNNAMED - -add-exports jdk.hotspot.agent/sun.jvm.hotspot.runtime=ALL-UNNAMED - -add-exports jdk.hotspot.agent/sun.jvm.hotspot.tools=ALL-UNNAMED -d /media/sf_C_DRIVE/Users/D046063/public_html/hotspot/JBreak2017/git/examples/bin /media/sf_C_DRIVE/Users/D046063/public_html/hotspot/JBreak2017/git/examples/src/org/simonis/ClassStatistics.java
+
+/share/output-jdk9-dev-dbg/images/jdk/bin/java - -add-modules jdk.hotspot.agent - -add-exports jdk.hotspot.agent/sun.jvm.hotspot.classfile=ALL-UNNAMED - -add-exports jdk.hotspot.agent/sun.jvm.hotspot.oops=ALL-UNNAMED - -add-exports jdk.hotspot.agent/sun.jvm.hotspot.runtime=ALL-UNNAMED - -add-exports jdk.hotspot.agent/sun.jvm.hotspot.tools=ALL-UNNAMED -cp /media/sf_C_DRIVE/Users/D046063/public_html/hotspot/JBreak2017/git/examples/bin org.simonis.ClassStatistics /share/output-jdk9-dev-dbg/images/jdk/bin/java core.6780
+
+
+org.simonis.Crash5
+
+Breakpoint 2, PhaseMacroExpand::generate_arraycopy (this=0x7fff3c6beaf0, ac=0x7fff20181600, alloc=0x0, ctrl=0x7fff3c6be838, mem=0x7fff20185810, io=0x7fff3c6be840, adr_type=0x7fff140032c0, basic_elem_type=T_CONFLICT, src=0x7fff2017e928, src_offset=0x7fff2017c840, dest=0x7fff2017dd90, dest_offset=0x7fff2017c840, copy_length=0x7fff2017c528, disjoint_bases=false, length_never_negative=false, slow_region=0x0)
+    at /share/OpenJDK/jdk9-dev/hotspot/src/share/vm/opto/macroArrayCopy.cpp:282
+
+(gdb) p _igvn.type(ac->in(13))->is_klassptr()->klass()->as_array_klass()->base_element_type()->print()
+<ciInstanceKlass name=org/simonis/Crash5$X loader=0x00007fff46ffd250 loaded=true initialized=true finalized=false subklass=false size=24 flags=public,super ident=1088 address=0x00007fff201495f0>$14 = void
+
+ac->in(ArrayCopyNode::DestKlass)
+
+
+org.simonis.Crash6
+
+/share/output-jdk9-dev-dbg/images/jdk/bin/java -cp /c/Users/D046063/public_html/hotspot/JBreak2017/git/examples/bin -Xbatch -XX:SuppressErrorAt=/arraycopynode.cpp:228 org.simonis.Crash6
+
+#  SIGSEGV (0xb) at pc=0x00007f6b9575b3ad, pid=854, tid=871
+#
+# JRE version: OpenJDK Runtime Environment (9.0) (slowdebug build 9-internal+0-adhoc.simonis.jdk9-dev)
+# Java VM: OpenJDK 64-Bit Server VM (slowdebug 9-internal+0-adhoc.simonis.jdk9-dev, mixed mode, tiered, compressed oops, g1 gc, linux-amd64)
+# Problematic frame:
+# V  [libjvm.so+0xeca3ad]  PhaseMacroExpand::generate_arraycopy(ArrayCopyNode*, AllocateArrayNode*, Node**, MergeMemNode*, Node**, TypePtr const*, BasicType, Node*, Node*, Node*, Node*, Node*, bool, bool, RegionNode*)+0x65b
+#
+# Core dump will be written. Default location: /tmp/core.854
+#
+# An error report file with more information is saved as:
+# /tmp/hs_err_pid854.log
+#
+# Compiler replay data is saved as:
+# /tmp/replay_pid854.log
+
+
+
+        <section style="height:100%" data-background="images/crash.jpg">
+        </section>
+-->
+
+        <section style="height:100%" data-background="images/2015_Nepal_depremi_8.jpg">
+          <!-- https://commons.wikimedia.org/wiki/File:2015_Nepal_depremi_(8).jpg -->
+        </section>
+
+
+        <section class="demo">
+
+          <!-- the following data is from data/slide1/hs_err_pid4631.log -->
+          <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+            <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+$ java -Xmx20m org.simonis.Crash
+<span class="fragment"># A fatal error has been detected by the Java Runtime Environment:
+#
+#  <span class="fragment highlight-border">SIGSEGV (0xb) at pc=0x00007fd0c774a17a</span>, pid=4631, tid=4632
+#
+# JRE version: OpenJDK Runtime Environment (9.0) (slowdebug build 9-internal+0-adhoc.simonis.jdk9-dev)
+# Java VM: OpenJDK 64-Bit Server VM (slowdebug 9-internal+0-adhoc.simonis.jdk9-dev, mixed mode, tiered, compressed oops, g1 gc, linux-amd64)
+# Problematic frame:
+# V  [libjvm.so+0x127917a]  void <span class="fragment highlight-border">MemoryAccess::put&lt;int&gt;(int)+0x62</span>
+#
+# Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/core.4631</span>
+#
+# An error report file with more information is saved as:
+# <span class="fragment highlight-border">/tmp/JBreak2017_crash/hs_err_pid4631.log</span>
+
+$</span><span class="fragment"> ulimit -c
+0                                      // No core file will be written
+$</span><span class="fragment"> cat /proc/sys/kernel/core_pattern
+|/usr/share/apport/apport %p %s %c %P  // core file will be piped to apport
+$ </span>
+            </code>
+          </pre>
+
+        </section>
+
+        <section class="demo">
+
+          <section>
+            <h2>The <code style="text-transform: none;">Crash</code> example</h2>
+
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="java" data-trim="true" data-noescape="true" style="height:100%">
+public class Crash {
+
+  final static Unsafe UNSAFE = getUnsafe();
+
+  public static void crash(int x) {
+    UNSAFE.putInt(0x99, x);
+  }
+
+  public static void main(String[] args) {
+    crash(0x42);
+  }
+}
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Summary</h2>
+
+            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+---------------  S U M M A R Y ------------
+
+Command Line: <span class="fragment highlight-border">-Xmx20m org.simonis.Crash</span>
+
+Host: simonis, Intel(R) <span class="fragment highlight-border">Core(TM) i5-4300U CPU</span> @ 1.90GHz, 4 cores, 7G, \
+                                                   Ubuntu 14.04.1 LTS
+Time: Tue Mar 14 16:48:36 2017 CET <span class="fragment highlight-border">elapsed time: 1 seconds</span> (0d 0h 0m 1s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00007fd0c0019800):  JavaThread "main" \
+  [_thread_in_vm, id=4632, stack(0x00007fd0c8fa0000,0x00007fd0c90a0000)]
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Native/Mixed Stack trace</h2>
+
+            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+Stack: [0x00007fd0c8fa0000,0x00007fd0c90a0000],  sp=0x00007fd0c909e500,  free space=1017k
+Native frames: (J=compiled Java code, A=aot compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.so+0x127917a]  void <span class="fragment highlight-border" data-fragment-index="5">MemoryAccess::put&lt;int&gt;(int)</span>+0x62
+V  [libjvm.so+0x1270574]  Unsafe_PutInt+0x174
+j  jdk.internal.misc.Unsafe.putInt(Ljava/lang/Object;JI)V+0 java.base@9-internal
+j  jdk.internal.misc.Unsafe.putInt(JI)V+4 java.base@9-internal
+j  <span class="fragment highlight-border" data-fragment-index="5">sun.misc.Unsafe.putInt(JI)</span>V+5 jdk.unsupported@9-internal
+j  org.simonis.Crash.crash(I)V+7
+j  <span class="fragment highlight-border" data-fragment-index="3">org.simonis.Crash.main([Ljava/lang/String;)</span>V+2
+v  ~StubRoutines::call_stub
+V  [libjvm.so+0xc6abd5]  JavaCalls::call_helper(JavaValue*, methodHandle const&amp;, JavaCallArguments*, Thread*)+0x6ad
+V  [libjvm.so+0x10524b1]  os::os_exception_wrapper(void (*)(JavaValue*, methodHandle const&amp;, JavaCallArguments*, Thread*), JavaValue*, methodHandle const&amp;, JavaCallArguments*, Thread*)+0x41
+V  [libjvm.so+0xc6a512]  JavaCalls::call(JavaValue*, methodHandle const&amp;, JavaCallArguments*, Thread*)+0xaa
+V  [libjvm.so+0xc887dc]  jni_invoke_static(JNIEnv_*, JavaValue*, _jobject*, JNICallType, _jmethodID*, JNI_ArgumentPusher*, Thread*)+0x1e3
+V  [libjvm.so+0xc9f1f5]  <span class="fragment highlight-border" data-fragment-index="2">jni_CallStaticVoidMethod</span>+0x33b
+C  [libjli.so+0x49f8]  JavaMain+0xac0
+C  [libpthread.so.0+0x8182]  <span class="fragment highlight-border" data-fragment-index="1">start_thread</span>+0xc2
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Java Stack trace</h2>
+
+            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  jdk.internal.misc.Unsafe.putInt(Ljava/lang/Object;JI)V+0 java.base@9-internal
+j  <mark class="border">jdk.internal.misc.Unsafe.putInt(JI)</mark>V+4 java.base@9-internal
+j  <mark class="border">sun.misc.Unsafe.putInt(JI)</mark>V+5 jdk.unsupported@9-internal
+j  org.simonis.Crash.crash(I)V+7
+j  <mark class="border">org.simonis.Crash.main([Ljava/lang/String;)</mark>V+2
+v  ~StubRoutines::call_stub
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Register mapping</h2>
+
+            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+siginfo: si_signo: 11 (SIGSEGV), si_code: 1 (SEGV_MAPERR), si_addr: 0x0000000000000099
+
+Register to memory mapping:
+
+RAX=0x00000000000000<span class="fragment highlight-border">42</span> is an unknown value
+RBX={method} {0x00007fd0798abc98} jdk/internal/misc/Unsafe.putInt
+RCX=0x00007fd0c0019800 is a thread
+RDX=0x00000000000000<span class="fragment highlight-border">99</span> is an unknown value
+RSP=0x00007fd0c909e500 is pointing into the stack for thread: 0x00007fd0c0019800
+RBP=0x00007fd0c909e540 is pointing into the stack for thread: 0x00007fd0c0019800
+RSI=0x0000000000000042 is an unknown value
+RDI=0x00007fd0c909e5c0 is pointing into the stack for thread: 0x00007fd0c0019800
+R8 =0x0000000000000042 is an unknown value
+R9 =
+<span class="fragment highlight-border">[error occurred during error reporting (printing register info), id 0xb]</span>
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Registers</h2>
+
+            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+Registers:
+RAX=0x00000000000000<mark class="border">42</mark>, RBX=0x00007fd0798abc98, RCX=0x00007fd0c0019800, 
+RDX=0x00000000000000<mark class="border">99</mark>, RSP=0x00007fd0c909e500, RBP=0x00007fd0c909e540, 
+RSI=0x0000000000000042, RDI=0x00007fd0c909e5c0, R8 =0x0000000000000042, 
+R9 =<mark class="border">0x00000000ffffffe0</mark>, R10=0x00007fd0a872da3c, R11=0x0000000000000008
+R12=0x0000000000000000, R13=0x00007fd0798abc90, R14=0x00007fd0c909e6c8, 
+R15=0x00007fd0c0019800, RIP=0x00007fd0c774a17a, EFLAGS=0x0000000000010246, 
+CSGSFS=0x8cd7000000000033, ERR=0x0000000000000006, TRAPNO=0x000000000000000e
+              </code>
+            </pre>
+          </section>
+
+          <section>
+            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Stack/Instructions</h2>
+
+            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+Top of Stack: (sp=0x00007fd0c909e500)
+0x00007fd0c909e500:   00000042c909e540 00007fd0c909e5c0
+0x00007fd0c909e510:   0000000000000099 0000000000000099
+0x00007fd0c909e520:   00007fd0c0019800 00007fd0c909e501
+0x00007fd0c909e530:   00007fd0c909e580 8cd73cc3b5998700
+
+Instructions: (<span class="fragment highlight-border" data-fragment-index="1">pc=0x00007fd0c774a17a</span>)
+0x00007fd0c774a15a:   89 c7 e8 ef f5 ff ff 48 89 45 d8 8b 55 c4 48 8b
+0x00007fd0c774a16a:   45 c8 89 d6 48 89 c7 e8 60 13 00 00 48 8b 55 d8
+<span class="fragment highlight-border" data-fragment-index="1">0x00007fd0c774a17a</span>:   89 02 48 8d 45 e0 48 89 c7 e8 1e f7 ff ff 48 8b
+0x00007fd0c774a18a:   45 f8 64 48 33 04 25 28 00 00 00 74 05 e8 14 01
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+            <h2><code style="text-transform: none;">hs_err.log</code>: Stack/Instructions</h2>
+
+            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+            <h2>Native/Mixed Stack trace</h2>
+
+            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+              </code>
+            </pre>
+          </section>
+
+        </section>
+
+        <section class="demo">
+
+          <section class="demo">
+
+            <h2>How are <code style="text-transform: none;">hs_err.log</code> files generated?</h2>
+
+<table class="calling_hirarchy">
+  <tr>
+    <td colspan="6" class="functionCall  indent_level_3">
+      <code>&lt;signal handler&gt;</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="11">&nbsp;</td>
+    <td colspan="5" class="functionCall  indent_level_4">
+    <code>signalHandler(sig=11, info=0x7ffff7fda070, uc=0x7ffff7fd9f40)</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="10">&nbsp;</td>
+    <td colspan="4" class="functionCall  indent_level_5">
+    <code>JVM_handle_linux_signal(sig=11, info=0x7ffff7fda070, <span class="fragment highlight-border">abort_if_unrecognized=1)</span></code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="9">&nbsp;</td>
+    <td colspan="3" class="functionCall  indent_level_6">
+    <code>VMError::report_and_die(sig=11, pc=0x7ffff668a17a &lt;MemoryAccess::put&gt;)</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="8">&nbsp;</td>
+    <td colspan="2" class="functionCall  indent_level_7">
+    <code><span class="fragment highlight-border">VMError::report</span>(stream=0x7ffff71aa9e0 &lt;VMError::log&gt;, _verbose=true)</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="7">&nbsp;</td>
+    <td colspan="1" class="functionCall  indent_level_8">
+    <code>print_native_stack(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>print_stack_trace(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>os::print_register_info(...)</code>
+    </td>
+  </tr>
+<!--
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>Universe::heap()-&gt;print_on_error(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>os::print_dll_info(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>Arguments::print_on(...)</code>
+    </td>
+  </tr>
+-->
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>...</code>
+    </td>
+  </tr>
+</table>
+
+            <div style="display:inline-block; text-align: left;">
+              <p>Whenever the HotSpot VM encounters an irrevocable error like:</p>
+              <ul>
+                <li>an unexpected signal</li>
+                <li>a guarantee or assertion</li>
+                <li>a native "out of memory" situation</li>
+              </ul>
+              <p>it calls <mark class="border"><code>VMError::report()</code></mark> which does the job!</p>
+            </div>
+
+          </section>
+
+
+          <section class="demo">
+
+            <h2>How are <code style="text-transform: none;">hs_err</code> files generated?</h2>
+
+            <div style="display:inline-block; width:90%; text-align: left;">
+              <p>Creating the <code>hs_err</code> file is not trivial:</p>
+              <ul>
+                <li>the VM is in an inconsistent state</li>
+                <li>the VM may run out of native memory / stack space</li>
+                <li>the internal data structures may be corrupted</li>
+                <li>have to gracefully handle subsequent signals/assertions/guarantees and timeouts!</li>
+              </ul>
+            </div>
+
+            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
+            <!-- see data/slide1/hs_err_pid6275.log for the same example running with -XX:-UseCompressedOops which doesn't produce an error during error reporting -->
+            <pre class="fragment big noshadow" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true">
+Register to memory mapping:
+RAX=0x0000000000000042 is an unknown value
+RBX={method} {0x00007fd0798abc98} jdk/internal/misc/Unsafe.putInt()
+RCX=0x00007fd0c0019800 is a thread
+RDX=0x0000000000000099 is an unknown value
+R9 =
+<span class="fragment highlight-border">[error occurred during error reporting (printing register info), id 0xb]</span>
+              </code>
+            </pre>
+            <div style="display:inline-block; width:90%; text-align: left;">
+              <ul>
+                <span class="fragment"><li>use <a href="https://rawgit.com/simonis/hotspot_internals/master/hotspot_internals.xhtml#/1/8"><code>SafeFetch</code></a>
+                    (see <a href="https://rawgit.com/simonis/hotspot_internals/master/hotspot_internals.xhtml">"HotSpot Internals"</a> from
+                    <a href="http://2016.jokerconf.com/">Joker 2016</a>)</li></span>
+              </ul>
+            </div>
+
+          </section>
+        </section>
+
+
+        <section>
+          <h2>Triggering <code style="text-transform: none;">hs_err.log</code> from <code style="text-transform: none;">jcmd</code></h2>
+
+            <div style="display:inline-block; width:95%; text-align: left;">
+              Prints VM information without crash and thread details:
+            </div>
+            <pre class="big noshadow" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true">
+$ jcmd 27211 VM.info
+<span class="fragment"># JRE version: OpenJDK Runtime Environment (9.0) (slowdebug build 9.jdk9-dev)
+# Java VM: OpenJDK 64-Bit Server VM (slowdebug 9-internal.simonis.jdk9-dev,    \
+                        mixed mode, tiered, compressed oops, g1 gc, linux-amd64)
+---------------  S U M M A R Y ------------
+
+Command Line: -Xmx128m HelloAWT
+
+Host: simonis, Intel(R) Core i5-4300U CPU @ 1.90GHz, 4 cores, 7G, Ubuntu 14.04
+Time: Fri Mar 24 14:17:50 2017 CET elapsed time: 38 seconds (0d 0h 0m 38s)
+---------------  P R O C E S S  ---------------
+
+Heap address: 0x00000000f8000000, size: 128 MB, Compressed Oops mode: 32-bit
+Narrow klass base: 0x0000000000000000, Narrow klass shift: 3
+Compressed class space size: 1073741824 Address: 0x0000000100000000</span>
+              </code>
+            </pre>
+        </section>
+
+
+        <section class="demo">
+
+          <section>
+
+            <h2>Crashes in the interpreter</h2>
+
+          <div style="width: 100%">
+            <div style="float: left; width: 60%">
+
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="java" data-trim="true" data-noescape="true" style="height:100%">
+public class CrashInt {
+  int[] ia = new int[1];
+
+  final static Unsafe UNSAFE = getUnsafe();
+
+  public static int crash(CrashInt ci) {
+    return ci.ia.length;
+  }
+
+  public static void main(String[] args) {
+    CrashInt ci = new CrashInt();
+    <span class="fragment highlight-border" data-fragment-index="1">UNSAFE.putLong(ci, 12L, 0xbadbabe)</span>;
+    crash(ci);
+  }
+}
+              </code>
+            </pre>
+
+            </div>
+            <div style="position:relative; float: right; width: 40%">
+
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="java" data-trim="true" data-noescape="true" style="height:100%">
+int crash(org.simonis.CrashInt)
+Code:
+ 0: aload_0
+ 1: getfield #23 // Field ia:[I
+ 4: arraylength
+ 5: ireturn
+              </code>
+            </pre>
+    <div width="100%" style="position: relative; margin: 0px 10px;">
+      <div class="" style="position: static;">
+        <object data="images/CrashInt_1.svg" type="image/svg+xml"
+                style="width: 100%;">&nbsp;</object>
+      </div>
+      <div class="fragment" data-fragment-index="1" style="position: absolute; left: 0; top: 0; width: 100%">
+        <object data="images/CrashInt_2.svg" type="image/svg+xml"
+                style="width: 100%;">&nbsp;</object>
+      </div>
+    </div>
+
+            </div>
+          </div>
+
+          </section>
+
+
+          <section>
+
+            <h2>Crashes in the interpreter</h2>
+
+            <!-- the following data is from data/slide2/hs_err_pid10985.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+# SIGSEGV (0xb) at <mark class="border">pc=0x00007f755074ec61</mark>, pid=10985, tid=10986
+# ...
+# Problematic frame:
+# <mark class="border">j</mark>  org.simonis.CrashInt.crash(Lorg/simonis/CrashInt;)I+0
+
+si_signo: 11 (SIGSEGV), si_code: 1 (SEGV_MAPERR), <mark class="border">si_addr: 0x000000000badbaca</mark>
+...
+<mark class="border">RAX=0x000000000badbabe</mark> is an unknown value
+...
+arraylength  190 arraylength  [0x00007f755074ec60, 0x00007f755074ec80]  32 bytes
+[Disassembling for mach='i386:x86-64']
+  0x00007f755074ec60: pop    %rax                  // pop array from stack
+  <mark class="border">0x00007f755074ec61: mov    0xc(%rax),%eax</mark>        // load length field
+  0x00007f755074ec64: movzbl 0x1(%r13),%ebx        // load next bytecode
+  0x00007f755074ec69: inc    %r13                  // increment bytecode pointer
+  0x00007f755074ec6c: movabs $0x7f756fd00980,%r10  // load template table
+  0x00007f755074ec76: jmpq   *(%r10,%rbx,8)        // jump to next bytecode
+              </code>
+            </pre>
+          </section>
+        </section>
+
+
+        <section class="demo">
+
+          <section>
+
+            <h2>Out of Memory</h2>
+
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+$ java -Xmx20m -XX:MaxMetaspaceSize=6m org.simonis.CrashOOM
+<span class="fragment">Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
+	at java.base/java.lang.ClassLoader.defineClass1(Native Method)
+	at java.base/java.lang.ClassLoader.defineClass(ClassLoader.java:986)
+	at org.simonis.CrashOOM$MyClassLoader.myDefineClass(CrashOOM.java:10)
+	at org.simonis.CrashOOM.crash(CrashOOM.java:30)
+	at org.simonis.CrashOOM.main(CrashOOM.java:40)</span>
+              </code>
+            </pre>
+          </section>
+
+          <section>
+
+            <h2>Out of Memory - let it crash!</h2>
+
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+$ java -Xmx20m -XX:MaxMetaspaceSize=6m <span class="fragment highlight-border">-XX:+CrashOnOutOfMemoryError</span> \
+                                          org.simonis.CrashOOM
+Aborting due to java.lang.OutOfMemoryError: Metaspace
+# To suppress the following error report, specify this argument
+# after -XX: or in .hotspotrc:  SuppressErrorAt=/debug.cpp:340
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  fatal error: OutOfMemory encountered: Metaspace
+#
+# Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/JBreak2017_crash_oom/core</span>
+#
+# An error report file with more information is saved as:
+# <span class="fragment highlight-border">/tmp/JBreak2017_crash_oom/hs_err_pid23919.log</span>
+              </code>
+            </pre>
+          </section>
+
+          <section>
+
+            <h2>Out of Memory - <code style="text-transform: none;">hs_err_pid23919.log</code></h2>
+
+            <!-- the following data is from data/slide3/hs_err_pid23919.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
+V  [libjvm.so+0xfa6346]  Metaspace::report_metadata_oome()+0x1aa
+V  [libjvm.so+0xfa60a8]  Metaspace::allocate()+0x308
+V  [libjvm.so+0x5bee05]  MetaspaceObj::operator new()+0x4f
+V  [libjvm.so+0x97bc93]  <span class="fragment highlight-border" data-fragment-index="5">ConstantPool::allocate()</span>+0x8f
+V  [libjvm.so+0x851b21]  ClassFileParser::parse_stream()+0x42f
+V  [libjvm.so+0x85128c]  <span class="fragment highlight-border" data-fragment-index="4">ClassFileParser::ClassFileParser()</span>+0x61c
+V  [libjvm.so+0xe2ee3f]  KlassFactory::create_from_stream()+0x259
+V  [libjvm.so+0x11fc770]  SystemDictionary::resolve_from_stream()+0x238
+V  [libjvm.so+0xcec45c]  jvm_define_class_common()+0x37f
+V  [libjvm.so+0xcec983]  JVM_DefineClassWithSource+0x207
+C  [libjava.so+0xe6b1]  <span class="fragment highlight-border" data-fragment-index="3">Java_java_lang_ClassLoader_defineClass1</span>+0x231
+j  java.lang.ClassLoader.defineClass1()Ljava/lang/Class;+0 java.base@9-internal
+j  <span class="fragment highlight-border" data-fragment-index="2">java.lang.ClassLoader.defineClass()</span>Ljava/lang/Class;+27 java.base@9-internal
+j  org.simonis.CrashOOM$MyClassLoader.myDefineClass()Ljava/lang/Class;+7
+j  <span class="fragment highlight-border" data-fragment-index="1">org.simonis.CrashOOM.crash(I)</span>V+27
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+
+            <h2>Out of Memory - <code style="text-transform: none;">hs_err_pid23919.log</code></h2>
+
+            <!-- the following data is from data/slide3/hs_err_pid23919.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+Events (10 events):
+Event: 1,269 <span class="fragment highlight-border" data-fragment-index="1">loading class org/simonis/CrashOOM$MyClassLoader</span>
+Event: 1,269 loading class org/simonis/CrashOOM$MyClassLoader done
+Event: 1,464 Executing <span class="fragment highlight-border" data-fragment-index="2">VM operation: CollectForMetadataAllocation</span>
+Event: 1,714 Executing VM operation: CollectForMetadataAllocation done
+GC Heap History (6 events):
+Event: 1,465 GC heap before
+ Metaspace       <span class="fragment highlight-border" data-fragment-index="3">used 6056K, capacity 6124K</span>, committed 6144K, reserved 1056768K
+Event: 1,507 GC heap after
+ Metaspace       <span class="fragment highlight-border" data-fragment-index="3">used 6056K, capacity 6124K</span>, committed 6144K, reserved 1056768K
+Event: 1,507 GC heap before
+ Metaspace       <span class="fragment highlight-border" data-fragment-index="3">used 6056K, capacity 6124K</span>, committed 6144K, reserved 1056768K
+Event: 1,614 GC heap after
+ Metaspace       <span class="fragment highlight-border" data-fragment-index="3">used 6056K, capacity 6124K</span>, committed 6144K, reserved 1056768K
+Event: 1,614 GC heap before
+ Metaspace       <span class="fragment highlight-border" data-fragment-index="3">used 6056K, capacity 6124K</span>, committed 6144K, reserved 1056768K
+Event: 1,713 GC heap after
+ Metaspace       <span class="fragment highlight-border" data-fragment-index="3">used 6053K, capacity 6120K</span>, committed 6144K, reserved 1056768K
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+
+            <h2>Serviceability Agent - <code style="text-transform: none;">core.23919</code></h2>
+
+            <!-- the following data is from data/slide3/hs_err_pid23919.log -->
+            <pre class="big noshadow" style="margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+$ jhsdb hsdb --exe /output-jdk9-dev-dbg/images/jdk/bin/java --core core.23919
+              </code>
+            </pre>
+
+            <img style="height:100%" class="plain" data-src="images/hsdb_class_browser.png" alt="Servieability Agent hsdb class browser"/>
+
+          </section>
+
+          <section class="demo">
+
+            <h2>Out of Memory - Serviceability Agent</h2>
+
+            <!-- the following data is from data/slide3/hs_err_pid23919.log -->
+            <pre class="big noshadow" style="margin: 0;" data-trim="true">
+              <code class="java" data-trim="true" data-noescape="true" style="height:100%">
+public class ClassStatistics  extends <mark class="border">sun.jvm.hotspot.tools.Tool</mark> {
+  public void run() {
+    <span class="fragment highlight-border" data-fragment-index="1">ClassLoaderDataGraph</span> cldg = <span class="fragment highlight-border" data-fragment-index="1">VM.getVM().getClassLoaderDataGraph()</span>;
+    for (ClassLoaderData cld =
+           <span class="fragment highlight-border" data-fragment-index="2">cldg.getClassLoaderGraphHead()</span>; cld != null; cld = cld.next()) {
+      for (Klass k = cld.getKlasses(); k != null; k = k.getNextLinkKlass()) {
+        if (<span class="fragment highlight-border" data-fragment-index="3">k instanceof InstanceKlass</span>) {
+          InstanceKlass ik = (InstanceKlass)k;
+          Oop cl = ik.getClassLoader();
+          System.out.println(k.getName().asString() + " (" +
+              (cl == null ? "null" : cl.getKlass().getName().asString()) + ")");
+        }
+      }
+    }
+  }
+  public static void main(String[] args) {
+    ClassStatistics cs = new ClassStatistics();
+    cs.execute(args);
+              </code>
+            </pre>
+
+          </section>
+
+          <section>
+
+            <h2>Out of Memory - <code style="text-transform: none;">hs_err_pid23919.log</code></h2>
+
+            <!-- the following data is from data/slide3/hs_err_pid23919.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+$ java <mark class="border">--add-modules jdk.hotspot.agent</mark> <mark class="border">--add-exports ..</mark> \
+    org.simonis.ClassStatistics /output-jdk9-dev-dbg/images/jdk/bin/java core
+<span class="fragment">Debugger attached successfully.
+Server compiler detected.
+JVM version is 9-internal+0-adhoc.simonis.jdk9-dev
+org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
+org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
+org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
+org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
+org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
+org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
+org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
+...
+$ </span><span class="fragment">java --add-modules jdk.hotspot.agent --add-exports .. \
+    org.simonis.ClassStatistics /output-jdk9-dev-dbg/images/jdk/bin/java core \
+    | grep CrashOOM | wc</span>
+<span class="fragment">    320     640   18600</span>
+              </code>
+            </pre>
+          </section>
+
+          <section>
+
+            <h2>Out of Memory</h2>
+
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="java" data-trim="true" data-noescape="true" style="height:100%">
+public class CrashOOM {
+  public static void crash(int count) throws Exception {
+    byte[] buf = <span class="fragment highlight-border">getBytecodes("CrashOOM")</span>;
+    // exposes protected ClassLoader.defineClass() as myDefineClass()
+    MyClassLoader <span class="fragment highlight-border">cl = new MyClassLoader()</span>;
+    for (int i = 0; i &lt; count; i++) {
+      try {
+        <span class="fragment highlight-border">cl.myDefineClass("org.simonis.CrashOOM", buf, 0, buf.length)</span>;
+      }
+      <span class="fragment highlight-border">catch (LinkageError jle)</span> {
+        if (i == 0) throw new Exception("Should succeed the first time.");
+      }
+    }
+  }
+  public static void main(String[] args) throws Exception {
+    crash(args.length > 0 ? Integer.parseInt(args[0]) : 1000);
+  }
+              </code>
+            </pre>
+
+          </section>
+
+          <section class="demo">
+            <h3 style="text-transform: none;"><a href="https://bugs.openjdk.java.net/browse/JDK-8173743">https://bugs.openjdk.java.net/browse/JDK-8173743</a></h3>
+            <img class="plain" data-src="images/8173743_ClassDefFailure.png" alt="JDK-8173743: Failures during class definition can lead to memory leaks in metaspace"/>
+          </section>
+
+        </section>
+
+
+        <section class="demo">
+
+          <section class="demo">
+
+            <h2><code style="text-transform: none;">org.simonis.Crash5</code></h2>
+
+            <!-- the following data is from data/slide4/hs_err_pid31451.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+$ java -Xbatch -XX:-DoEscapeAnalysis org.simonis.Crash5
+<span class="fragment" data-fragment-index="1"># A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007f8f33fab35d, pid=31451, tid=31469
+#
+# JRE version: OpenJDK Runtime Environment (9.0) (slowdebug build 9-internal...)
+# Java VM: OpenJDK 64-Bit Server VM (slowdebug 9-internal+0-adhoc.simonis...)
+# Problematic frame:
+# V  [libjvm.so+0xeca35d]  <mark class="border">PhaseMacroExpand::generate_arraycopy</mark>(...)+0x65b
+#
+# Core dump will be written. Default location: <span class="fragment highlight-border" data-fragment-index="3">/tmp/core.31451</span>
+#
+# An error report file with more information is saved as:
+# <span class="fragment highlight-border" data-fragment-index="3">/tmp/hs_err_pid31451.log</span>
+#
+# Compiler replay data is saved as:
+# <span class="fragment highlight-border" data-fragment-index="2">/tmp/replay_pid31451.log</span></span>
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+
+            <h2><code style="text-transform: none;">hs_err_pid31451.log</code></h2>
+
+            <!-- the following data is from data/slide4/hs_err_pid31451.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+Command Line: <span class="fragment highlight-border" data-fragment-index="1">-Xbatch -XX:-DoEscapeAnalysis org.simonis.Crash5</span>
+...
+<span class="fragment highlight-border" data-fragment-index="2">Current thread</span> (0x00007f8f2c256000): <span class="fragment highlight-border" data-fragment-index="2">JavaThread "C2 CompilerThread1"</span> daemon ..
+...
+<span class="fragment highlight-border" data-fragment-index="3">Current CompileTask</span>:
+C2:   1436  116    b  4       <span class="fragment highlight-border" data-fragment-index="3">org.simonis.Crash5$A::crash</span> (14 bytes)
+...
+Stack: [0x00007f8ee4457000,0x00007f8ee4558000], sp=0x007f8ee4552630, free=1005k
+Native frames: (J=compiled, A=aot compiled, j=interpreted, Vv=VM code, C=native
+V  [libjvm.so+0xeca35d]  <span class="fragment highlight-border" data-fragment-index="4">PhaseMacroExpand::generate_arraycopy</span>(...)+0x65b
+V  [libjvm.so+0xece34e]  PhaseMacroExpand::expand_arraycopy_node(...)+0x8a8
+V  [libjvm.so+0xec6f59]  PhaseMacroExpand::expand_macro_nodes()+0x733
+V  [libjvm.so+0x90c023]  Compile::Optimize()+0xe37
+V  [libjvm.so+0x9048b2]  Compile::Compile(...)+0x11d2
+V  [libjvm.so+0x7a15d9]  C2Compiler::compile_method(...)+0x14d
+V  [libjvm.so+0x923173]  CompileBroker::invoke_compiler_on_method(...)+0x715
+V  [libjvm.so+0x922153]  CompileBroker::compiler_thread_loop()+0x2d3
+V  [libjvm.so+0x123d762]  compiler_thread_entry(JavaThread*, Thread*)+0x85
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+
+            <h2><code style="text-transform: none;">-XX:+ReplayCompiles</code></h2>
+
+            <!-- the following data is from data/slide4/hs_err_pid31451.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+$ java -XX:+ReplayCompiles -XX:ReplayDataFile=<mark class="border">/tmp/replay_pid31451.log</mark>
+<span class="fragment">Resolving klass java/lang/PublicMethods$MethodList at 721
+Resolving klass java/lang/reflect/Method at 23
+Resolving klass java/lang/reflect/Executable at 95
+Resolving klass java/lang/Object at 3
+Resolving klass org/simonis/Crash5$X at 16
+$</span><span class="fragment"> java -XX:+ReplayCompiles <mark class="border">-XX:-DoEscapeAnalysis</mark> \
+                           -XX:ReplayDataFile=/tmp/replay_pid31451.log</span>
+<span class="fragment">Resolving klass java/lang/PublicMethods$MethodList at 721
+Resolving klass java/lang/reflect/Method at 23
+Resolving klass java/lang/reflect/Executable at 95
+Resolving klass java/lang/Object at 3
+Resolving klass org/simonis/Crash5$X at 16
+#  SIGSEGV (0xb) at pc=0x00007f3f93dff35d, pid=31648, tid=31665
+...
+# Problematic frame:
+# V  [libjvm.so+0xeca35d]  <mark class="border">PhaseMacroExpand::generate_arraycopy</mark>(...)+0x65b</span>
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+
+            <h2>Debugging the crash</h2>
+
+            <!-- the following data is from data/slide4/hs_err_pid31451.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+$ gdb java
+(gdb) <span class="fragment">b *(&amp;'PhaseMacroExpand::generate_arraycopy' + 0x65b)
+Breakpoint 1 at 0x7ffff62db35d: file .../macroArrayCopy.cpp, line 360.
+(gdb) </span><span class="fragment">run -XX:+ReplayCompiles -XX:-DoEscapeAnalysis \
+                              -XX:ReplayDataFile=/tmp/replay_pid31451.log
+Breakpoint 1, 0x00007ffff62db35d in PhaseMacroExpand::generate_arraycopy (...) \
+           at /OpenJDK/jdk9-dev/hotspot/src/share/vm/opto/macroArrayCopy.cpp:360
+360	        <mark class="border">*(int*)0 = 0xcafebabe</mark>;
+(gdb) </span><span class="fragment">list
+354   // Crash demo for JBreak/Jpoint
+355   ciKlass* k = _igvn.type(ac-&gt;in(ArrayCopyNode::DestKlass))-&gt;...-&gt;klass();
+356   if (k-&gt;is_array_klass()) {
+357     ciType* t = k-&gt;as_array_klass()-&gt;base_element_type();
+358     if (strcmp(t-&gt;name(), <mark class="border">"org/simonis/Crash5$X"</mark>) == 0 ||
+359         strcmp(t-&gt;name(), "org/simonis/Crash6$X") == 0) {
+360       *(int*)0 = 0xcafebabe;</span>
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+
+            <h2><code style="text-transform: none;">org.simonis.Crash5</code></h2>
+
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="java" data-trim="true" data-noescape="true" style="">
+public class Crash5 {
+
+  public static class X {}
+  public static class Y extends X {}
+
+  public static class A {
+    public static void crash(Object src) {
+      System.arraycopy(src, 0, new X[1], 0, 1);
+    }
+  }
+
+  public static void main(String[] args) {
+    for (int i = 0; i &lt; 20_000; i++) {
+      A.crash(new Y[1]);
+    }
+  }
+}
+              </code>
+            </pre>
+          </section>
+
+        </section>
+
+
+        <section class="demo">
+
+          <section class="demo">
+
+            <h2><code style="text-transform: none;">org.simonis.Crash6</code></h2>
+
+            <!-- the following data is from data/slide5/hs_err_pid480.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+$ java -Xbatch -XX:-DoEscapeAnalysis org.simonis.Crash6
+<span class="fragment" data-fragment-index="1"># A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007fe0254c735d, pid=480, tid=499
+#
+# JRE version: OpenJDK Runtime Environment (9.0) (slowdebug build 9-internal...)
+# Java VM: OpenJDK 64-Bit Server VM (slowdebug 9-internal+0-adhoc.simonis...)
+# Problematic frame:
+# V  [libjvm.so+0xeca35d]  <mark class="border">PhaseMacroExpand::generate_arraycopy</mark>(...)+0x65b
+#
+# Core dump will be written. Default location: <span class="fragment highlight-border" data-fragment-index="3">/tmp/core.480</span>
+#
+# An error report file with more information is saved as:
+# <span class="fragment highlight-border" data-fragment-index="3">/tmp/hs_err_pid480.log</span>
+#
+# Compiler replay data is saved as:
+# <span class="fragment highlight-border" data-fragment-index="2">/tmp/replay_pid480.log</span></span>
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+
+            <h2><code style="text-transform: none;">-XX:+ReplayCompiles</code></h2>
+
+            <!-- the following data is from data/slide5/hs_err_pid480.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+$ java -XX:+ReplayCompiles -XX:-DoEscapeAnalysis \
+                           -XX:ReplayDataFile=/tmp/replay_pid480.log
+<span class="fragment">java.lang.NoClassDefFoundError: java/lang/invoke/LambdaForm$BMH
+Error while parsing line 37: java/lang/invoke/LambdaForm$BMH
+
+java.lang.NoClassDefFoundError: java/lang/invoke/LambdaForm$BMH
+Caused by: java.lang.ClassNotFoundException: java.lang.invoke.LambdaForm$BMH
+	at jdk.internal.loader.BuiltinClassLoader.loadClass(java.base@9-internal/BuiltinClassLoader.java:533)
+	at jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(java.base@9-internal/ClassLoaders.java:186)
+	at java.lang.ClassLoader.loadClass(java.base@9-internal/ClassLoader.java:476)
+
+Failed on java/lang/invoke/LambdaForm$BMH</span>
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+
+            <h2><code style="text-transform: none;">-XX:+ReplayCompiles</code></h2>
+
+            <!-- the following data is from data/slide5/hs_err_pid480.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+$ java -XX:+ReplayCompiles -XX:-DoEscapeAnalysis <mark class="border">-XX:+ReplayIgnoreInitErrors</mark> \
+                           -XX:ReplayDataFile=/tmp/replay_pid480.log
+<span class="fragment">java.lang.NoClassDefFoundError: java/lang/invoke/LambdaForm$BMH
+Error while parsing line 37: java/lang/invoke/LambdaForm$BMH
+java.lang.NoClassDefFoundError: java/lang/invoke/LambdaForm$DMH
+Error while parsing line 38: java/lang/invoke/LambdaForm$DMH
+...
+Resolving klass java/lang/Integer at 41
+Resolving klass java/lang/NumberFormatException at 50
+Error while parsing line 1231: constant pool length mismatch: wrong class files?
+
+$</span> <span class="fragment">java -XX:+ReplayCompiles -XX:-DoEscapeAnalysis -XX:+ReplayIgnoreInitErrors \
+       <mark class="border">-XX:+PrintCompilation</mark> -XX:ReplayDataFile=/tmp/replay_pid480.log</span>
+<span class="fragment">...
+Resolving klass java/lang/NumberFormatException at 50
+Error while parsing line 1231: constant pool length mismatch: wrong class files?
+
+   1490   17    b  4       <mark class="border">org.simonis.Crash6$A::crash</mark> (12 bytes)</span>
+              </code>
+            </pre>
+          </section>
+
+          <section>
+
+            <h2><code style="text-transform: none;">hs_err_pid480.log</code></h2>
+
+            <!-- the following data is from data/slide5/hs_err_pid480.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+Classes redefined (1 events):
+Event: 10,631 Thread 0x7fe0202128 <span class="fragment highlight-border">redefined class org.simonis.Crash6$A</span>, count=1
+
+Events (10 events):
+Event: 10,607 loading class java/lang/instrument/ClassDefinition
+Event: 10,608 loading class java/lang/instrument/ClassDefinition done
+Event: 10,609 <span class="fragment highlight-border">loading class org/simonis/Crash6$A</span>
+Event: 10,609 loading class org/simonis/Crash6$A done
+Event: 10,621 <span class="fragment highlight-border">Executing VM operation: RedefineClasses</span>
+Event: 10,643 Executing VM operation: RedefineClasses done
+Event: 10,661 loading class org/simonis/Crash6$Y
+Event: 10,661 loading class org/simonis/Crash6$Y done
+Event: 10,755 loading class org/simonis/Crash6$X
+Event: 10,755 loading class org/simonis/Crash6$X done
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+
+            <h2><code style="text-transform: none;">org.simonis.Crash6</code></h2>
+
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="java" data-trim="true" data-noescape="true" style="">
+public class Crash6 {
+  ...
+  public static class A {
+    public static void crash(Object src) {
+      System.arraycopy(src, 0, <mark class="border">new Y[1]</mark>, 0, 1);
+    }
+  }
+  public static void main(String[] args) throws Exception {
+    ...
+    byte[] buf = getBytecodes("Crash6$A");
+    for (int i = 0; i &lt; buf.length; i++) {
+      // Change 'new Y[1]' to 'new X[1]' in A.crash()
+      if (buf[i] == 'Y') buf[i] = 'X';
+    }
+    <mark class="border">inst.redefineClasses(new ClassDefinition(A.class, buf))</mark>;
+
+    for (int i = 0; i &lt; 20_000; i++) {
+      A.crash(new Y[1]);
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+
+            <h2>Serviceability Agent - dump classes from core</h2>
+
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+$ jhsdb clhsdb
+hsdb&gt; <span class="fragment">attach java core
+Opening core file, please wait...
+hsdb&gt; </span><span class="fragment">buildreplayjars
+hsdb&gt; </span><span class="fragment">quit
+$ </span><span class="fragment">ll *.jar
+-rw-rw-r-- 1 simonis simonis   90487 Mär 26 21:20 app.jar
+-rw-rw-r-- 1 simonis simonis 2396555 Mär 26 21:20 boot.jar
+$ </span><span class="fragment">java -XX:+ReplayCompiles -XX:-DoEscapeAnalysis -XX:+ReplayIgnoreInitErrors \
+       <mark class="border">-cp app.jar</mark> -XX:ReplayDataFile=/tmp/replay_pid480.log</span>
+<span class="fragment">java.lang.NoClassDefFoundError: java/lang/invoke/LambdaForm$BMH
+Error while parsing line 37: java/lang/invoke/LambdaForm$BMH
+...
+Resolving klass java/lang/System at 19
+Resolving klass org/simonis/Crash6$X at 33
+#  SIGSEGV (0xb) at pc=0x00007fb2150de35d, pid=1898, tid=1916
+#
+# V  [libjvm.so+0xeca35d]  <mark class="border">PhaseMacroExpand::generate_arraycopy(...)</mark>+0x65b
+</span>              </code>
+            </pre>
+          </section>
+
+        </section>
+
+      </div>
+
+    </div>
+
+    <script src="reveal.js/lib/js/head.min.js"></script>
+    <script src="reveal.js/js/reveal.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+      // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        //width: 1024,
+        //height: 768,
+        //width: 1280,
+        //height: 720,
+        width: 1366,
+        height: 768,
+        //width: 1920,
+        //height: 1080,
+        margin: 0.1,
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        slideNumber: true,
+
+        transition: 'none', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'reveal.js/plugin/highlight/highlight_9.7.0.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() {
+
+hljs.registerLanguage('terminal', function(hljs) {
+  return {
+    contains: [
+      hljs.C_LINE_COMMENT_MODE,
+      {
+        className: 'title',
+        lexemes: /[$()>_a-zA-Z0-9]+/,
+        keywords: "$ (gdb) hsdb>",
+        begin: /^\$ |\(gdb\)|hsdb> /,
+        end: /[^\\]\n/,
+	contains: [
+          hljs.COMMENT('//', '$', { endsParent: true })
+	]
+      }
+    ]
+  }
+});
+
+hljs.initHighlightingOnLoad(); } },
+          { src: 'reveal.js/plugin/zoom-js/zoom.js', async: true },
+          { src: 'reveal.js/plugin/notes/notes.js', async: true }
+        ]
+      });
+
+      //Reveal.configure({ slideNumber: true });
+    </script>
+
+  </body>
+</html>
+
+<!--  LocalWords:  HotSpot scrollable px pre noshadow Volker Simonis builtin VM
+ -->
+<!--  LocalWords:  Observability Bytecode runtime bytecodes Ljava sayHello ns
+ -->
+<!--  LocalWords:  JBreak JVMTI JNI fPIC JDK traceMethodAgent cpp TTS Safepoint
+ -->
+<!--  LocalWords:  unboxing JIT JVM safepoints Intrinsify fff POSIX
+ -->
+<!--  LocalWords:  NullPointers StackOverflows SEH VEH AIX NPE GC td
+ -->
+<!--  LocalWords:  safepoint hljs hirarchy monospace arial helvetica
+ -->
+<!--  LocalWords:  ffffff functionCall darkblue javaCall darkgreen cp
+ -->
+<!--  LocalWords:  ffa rowspan setq inputStr substring resultStr kbd
+ -->
+<!--  LocalWords:  concat vhs Shoi Seffano Sreedhar Midkiff movl RBP
+ -->
+<!--  LocalWords:  CompileCommand compileonly RDX movq klass RAX addl
+ -->
+<!--  LocalWords:  showversion Xbatch PrintCompilation UseTLAB imull
+ -->
+<!--  LocalWords:  UseCompressedOops TieredCompilation scalarReplace
+ -->
+<!--  LocalWords:  PrintOptoAssembly DoEscapeAnalysis arraycopy alloc
+ -->
+<!--  LocalWords:  PrintEscapeAnalysis PrintEliminateAllocations
+ -->
+<!--  LocalWords:  IndexOutOfBoundsException ArrayCopy ArrayCopyNode
+ -->
+<!--  LocalWords:  AllocateArrayNode
+ -->
