@@ -19,13 +19,13 @@ public class CrashInt {
 		}
 	}
 
-  public static int crash(CrashInt ci) {
-    return ci.ia.length;
+  public int crash() {
+    return ia.length;
   }
 
   public static void main(String[] args) {
     CrashInt ci = new CrashInt();
     UNSAFE.putLong(ci, 12L, 0xbadbabe);
-    crash(ci);
+    ci.crash();
   }
 }

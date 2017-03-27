@@ -512,10 +512,10 @@ siginfo: si_signo: 11 (SIGSEGV), si_code: 1 (SEGV_MAPERR), si_addr: 0x0000000000
 
 Register to memory mapping:
 
-RAX=0x00000000000000<span class="fragment highlight-border">42</span> is an unknown value
-RBX={method} {0x00007fd0798abc98} jdk/internal/misc/Unsafe.putInt
+RAX=0x00000000000000<span class="fragment highlight-border" data-fragment-index="1">42</span> is an unknown value
+RBX={method} {0x00007fd0798abc98} <span class="fragment highlight-border" data-fragment-index="2">jdk/internal/misc/Unsafe.putInt</span>
 RCX=0x00007fd0c0019800 is a thread
-RDX=0x00000000000000<span class="fragment highlight-border">99</span> is an unknown value
+RDX=0x00000000000000<span class="fragment highlight-border" data-fragment-index="1">99</span> is an unknown value
 RSP=0x00007fd0c909e500 is pointing into the stack for thread: 0x00007fd0c0019800
 RBP=0x00007fd0c909e540 is pointing into the stack for thread: 0x00007fd0c0019800
 RSI=0x0000000000000042 is an unknown value
@@ -562,6 +562,17 @@ Instructions: (<span class="fragment highlight-border" data-fragment-index="1">p
 0x00007fd0c774a16a:   45 c8 89 d6 48 89 c7 e8 60 13 00 00 48 8b 55 d8
 <span class="fragment highlight-border" data-fragment-index="1">0x00007fd0c774a17a</span>:   89 02 48 8d 45 e0 48 89 c7 e8 1e f7 ff ff 48 8b
 0x00007fd0c774a18a:   45 f8 64 48 33 04 25 28 00 00 00 74 05 e8 14 01
+              </code>
+            </pre>
+
+            <div style="display:inline-block; text-align: left; width: 85%;">
+              <p class="fragment" data-fragment-index="2">Using <code>gdb</code>, <code>objdump</code> or <code>https://onlinedisassembler.com</code></p>
+            </div>
+
+            <pre class="big noshadow fragment" data-fragment-index="2" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+<mark class="border">0x00007fd0c774a17a</mark>:   mov %eax,(%rdx)                                
+...
               </code>
             </pre>
           </section>
@@ -728,87 +739,102 @@ Compressed class space size: 1073741824 Address: 0x0000000100000000</span>
 
           <section>
 
-            <h2>Crashes in the Interpreter</h2>
-
-          <div style="width: 100%">
-            <div style="float: left; width: 60%">
-
-            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
-              <code class="java" data-trim="true" data-noescape="true" style="height:100%">
-public class CrashInt {
-  int[] ia = new int[1];
-
-  final static Unsafe UNSAFE = getUnsafe();
-
-  public static int crash(CrashInt ci) {
-    return ci.ia.length;
-  }
-
-  public static void main(String[] args) {
-    CrashInt ci = new CrashInt();
-    <span class="fragment highlight-border" data-fragment-index="1">UNSAFE.putLong(ci, 12L, 0xbadbabe)</span>;
-    crash(ci);
-  }
-}
-              </code>
-            </pre>
-
-            </div>
-            <div style="position:relative; float: right; width: 40%">
-
-            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
-              <code class="java" data-trim="true" data-noescape="true" style="height:100%">
-int crash(org.simonis.CrashInt)
-Code:
- 0: aload_0
- 1: getfield #23 // Field ia:[I
- 4: arraylength
- 5: ireturn
-              </code>
-            </pre>
-    <div width="100%" style="position: relative; margin: 0px 10px;">
-      <div class="" style="position: static;">
-        <object data="images/CrashInt_1.svg" type="image/svg+xml"
-                style="width: 100%;">&nbsp;</object>
-      </div>
-      <div class="fragment" data-fragment-index="1" style="position: absolute; left: 0; top: 0; width: 100%">
-        <object data="images/CrashInt_2.svg" type="image/svg+xml"
-                style="width: 100%;">&nbsp;</object>
-      </div>
-    </div>
-
-            </div>
-          </div>
-
-          </section>
-
-
-          <section>
-
-            <h2>Crashes in the Interpreter</h2>
+            <h2>Where did we crash?</h2>
 
             <!-- the following data is from data/slide2/hs_err_pid10985.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
-# SIGSEGV (0xb) at <mark class="border">pc=0x00007f755074ec61</mark>, pid=10985, tid=10986
+# SIGSEGV (0xb) at <span class="fragment highlight-current-border" data-fragment-index="2">pc=0x00007f755074ec61</span>, pid=10985, tid=10986
 # ...
 # Problematic frame:
-# <mark class="border">j</mark>  org.simonis.CrashInt.crash(Lorg/simonis/CrashInt;)I+0
+# <span class="fragment highlight-current-border" data-fragment-index="1">j</span>  org.simonis.CrashInt.crash(Lorg/simonis/CrashInt;)I+0
 
-si_signo: 11 (SIGSEGV), si_code: 1 (SEGV_MAPERR), <mark class="border">si_addr: 0x000000000badbaca</mark>
+si_signo: 11 (SIGSEGV), si_code: 1 (SEGV_MAPERR), <span class="fragment highlight-current-border" data-fragment-index="4">si_addr: 0x000000000badbaca</span>
 ...
-<mark class="border">RAX=0x000000000badbabe</mark> is an unknown value
+<span class="fragment highlight-current-border" data-fragment-index="4">RAX=0x000000000badbabe</span> is an unknown value
 ...
-arraylength  190 arraylength  [0x00007f755074ec60, 0x00007f755074ec80]  32 bytes
+<span class="fragment highlight-current-border" data-fragment-index="3">arraylength</span>  190 [0x00007f755074ec60, 0x00007f755074ec80]  32 bytes
 [Disassembling for mach='i386:x86-64']
   0x00007f755074ec60: pop    %rax                  // pop array from stack
-  <mark class="border">0x00007f755074ec61: mov    0xc(%rax),%eax</mark>        // load length field
+  <span class="fragment highlight-current-border" data-fragment-index="2">0x00007f755074ec61</span>: <span class="fragment highlight-current-border" data-fragment-index="4">mov    0xc(%rax),%eax</span>        // load length field
   0x00007f755074ec64: movzbl 0x1(%r13),%ebx        // load next bytecode
   0x00007f755074ec69: inc    %r13                  // increment bytecode pointer
   0x00007f755074ec6c: movabs $0x7f756fd00980,%r10  // load template table
   0x00007f755074ec76: jmpq   *(%r10,%rbx,8)        // jump to next bytecode
               </code>
             </pre>
+          </section>
+
+          <section>
+
+            <h2>Crash in the Interpreter</h2>
+
+            <div style="width: 100%">
+              <div style="float: left; width: 58%">
+
+                <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+                  <code class="java" data-trim="true" data-noescape="true" style="height:100%">
+public class CrashInt {
+  int[] ia = new int[1];
+
+  final static Unsafe UNSAFE = getUnsafe();
+
+  public int crash() {
+    return ia.length;
+  }
+
+  public static void main(String[] args) {
+    CrashInt ci = <span class="fragment highlight-current-border" data-fragment-index="1">new CrashInt()</span>;
+    <span class="fragment highlight-border" data-fragment-index="2">UNSAFE.putLong(ci, 12L, 0xbadbabe)</span>;
+    ci.crash();
+  }
+}
+                  </code>
+                </pre>
+
+              </div>
+              <div style="position:relative; float: right; width: 42%">
+
+                <div class="fragment" data-fragment-index="1" width="100%" style="position: relative; margin: 0 0 0 15px;">
+                  <div class="" style="position: static;">
+                    <object data="images/CrashInt_1.svg" type="image/svg+xml"
+                            style="width: 100%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="2" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/CrashInt_2.svg" type="image/svg+xml"
+                            style="width: 100%;">&nbsp;</object>
+                  </div>
+                </div>
+
+                <pre class="big noshadow fragment" data-fragment-index="3" style="height:100%; margin: 0;" data-trim="true">
+                  <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+$ javap -c org.simonis.CrashInt
+...
+int crash()
+Code:
+0: aload_0      // load 'this'
+1: getfield #23 // int[] this.ia
+4: <mark class="border">arraylength</mark>
+5: ireturn
+                  </code>
+                </pre>
+
+              </div>
+            </div>
+
+          </section>
+
+          <section>
+            <h2>Crash Location and Crash Reason</h2>
+
+            <ul>
+              <li>Crash location and crash reason can different</li>
+              <li>E.g. an error in the JIT can trigger an error in GC</li>
+              <li>E.g. an error in native code can trigger an error in the interpreter</li>
+              <li>Carefully analyzing the <code>hs_err</code> file can give hints to the root cause</li>
+              <li>Look for well known byte patterns and recent events like:<br/>
+                GC, deoptimization, class loading/redefinition, JIT compilation, exceptions, etc.</li>
+            </ul>
           </section>
         </section>
 
@@ -867,18 +893,18 @@ Native frames: (J=compiled Java code, j=interpreted, Vv=VM code, C=native code)
 V  [libjvm.so+0xfa6346]  Metaspace::report_metadata_oome()+0x1aa
 V  [libjvm.so+0xfa60a8]  Metaspace::allocate()+0x308
 V  [libjvm.so+0x5bee05]  MetaspaceObj::operator new()+0x4f
-V  [libjvm.so+0x97bc93]  <span class="fragment highlight-border" data-fragment-index="5">ConstantPool::allocate()</span>+0x8f
+V  [libjvm.so+0x97bc93]  <span class="fragment highlight-current-border" data-fragment-index="5">ConstantPool::allocate()</span>+0x8f
 V  [libjvm.so+0x851b21]  ClassFileParser::parse_stream()+0x42f
-V  [libjvm.so+0x85128c]  <span class="fragment highlight-border" data-fragment-index="4">ClassFileParser::ClassFileParser()</span>+0x61c
+V  [libjvm.so+0x85128c]  <span class="fragment highlight-current-border" data-fragment-index="4">ClassFileParser::ClassFileParser()</span>+0x61c
 V  [libjvm.so+0xe2ee3f]  KlassFactory::create_from_stream()+0x259
 V  [libjvm.so+0x11fc770]  SystemDictionary::resolve_from_stream()+0x238
 V  [libjvm.so+0xcec45c]  jvm_define_class_common()+0x37f
 V  [libjvm.so+0xcec983]  JVM_DefineClassWithSource+0x207
-C  [libjava.so+0xe6b1]  <span class="fragment highlight-border" data-fragment-index="3">Java_java_lang_ClassLoader_defineClass1</span>+0x231
+C  [libjava.so+0xe6b1]  <span class="fragment highlight-current-border" data-fragment-index="3">Java_java_lang_ClassLoader_defineClass1</span>+0x231
 j  java.lang.ClassLoader.defineClass1()Ljava/lang/Class;+0 java.base@9-internal
-j  <span class="fragment highlight-border" data-fragment-index="2">java.lang.ClassLoader.defineClass()</span>Ljava/lang/Class;+27 java.base@9-internal
+j  <span class="fragment highlight-current-border" data-fragment-index="2">java.lang.ClassLoader.defineClass()</span>Ljava/lang/Class;+27 java.base@9-internal
 j  org.simonis.CrashOOM$MyClassLoader.myDefineClass()Ljava/lang/Class;+7
-j  <span class="fragment highlight-border" data-fragment-index="1">org.simonis.CrashOOM.crash(I)</span>V+27
+j  <span class="fragment highlight-current-border" data-fragment-index="1">org.simonis.CrashOOM.crash(I)</span>V+27
               </code>
             </pre>
           </section>
@@ -923,8 +949,36 @@ $ jhsdb hsdb --exe /output-jdk9-dev-dbg/images/jdk/bin/java --core core.23919
               </code>
             </pre>
 
-            <img style="height:100%" class="plain" data-src="images/hsdb_class_browser.png" alt="Servieability Agent hsdb class browser"/>
+            <img style="height:100%" class="fragment plain" data-src="images/hsdb_class_browser_annotated.png" alt="Servieability Agent hsdb class browser"/>
 
+          </section>
+
+          <section class="demo">
+
+            <h2>Out of Memory - <code style="text-transform: none;">hs_err_pid23919.log</code></h2>
+
+            <!-- the following data is from data/slide3/hs_err_pid23919.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+Internal exceptions (10 events):
+Event: 1,459 Thread 0x00007f4150019800 <span class="fragment highlight-current-border" data-fragment-index="1">Exception a 'java/lang/LinkageError'</span>:
+ <span class="fragment highlight-current-border" data-fragment-index="2">loader</span> (instance of  <span class="fragment highlight-current-border" data-fragment-index="2">org/simonis/CrashOOM$MyClassLoader</span>):
+ <span class="fragment highlight-current-border" data-fragment-index="3">attempted duplicate class definition for name: "org/simonis/CrashOOM"</span> thrown 
+Event: 1,460 Thread 0x00007f4150019800 Exception a 'java/lang/LinkageError':
+ loader (instance of  org/simonis/CrashOOM$MyClassLoader):
+ <span class="fragment highlight-current-border" data-fragment-index="3">attempted duplicate class definition for name: "org/simonis/CrashOOM"</span> thrown 
+Event: 1,461 Thread 0x00007f4150019800 Exception a 'java/lang/LinkageError':
+ loader (instance of  org/simonis/CrashOOM$MyClassLoader):
+ <span class="fragment highlight-current-border" data-fragment-index="3">attempted duplicate class definition for name: "org/simonis/CrashOOM"</span> thrown 
+Event: 1,462 Thread 0x00007f4150019800 Exception a 'java/lang/LinkageError':
+ loader (instance of  org/simonis/CrashOOM$MyClassLoader):
+ <span class="fragment highlight-current-border" data-fragment-index="3">attempted duplicate class definition for name: "org/simonis/CrashOOM"</span> thrown 
+...
+Event: 1,465 Thread 0x00007f4150019800 Exception a 'java/lang/LinkageError':
+ loader (instance of  org/simonis/CrashOOM$MyClassLoader):
+ <span class="fragment highlight-current-border" data-fragment-index="3">attempted duplicate class definition for name: "org/simonis/CrashOOM"</span> thrown 
+              </code>
+            </pre>
           </section>
 
           <section class="demo">
@@ -1327,6 +1381,27 @@ Resolving klass org/simonis/Crash6$X at 33
 </span>              </code>
             </pre>
           </section>
+
+        </section>
+
+
+        <section>
+
+          <h2>Further reading</h2>
+
+          <ul>
+            <li><a href="https://www.youtube.com/watch?v=jd6dJa7tSNU">Andrei Pangin, JVM crash dump analysis</a>, RigaDevDay 2015</li>
+            <li><a href="https://www.youtube.com/watch?v=CTqwPLUIAsY">Андрей Паньгин — Аварийный дамп — «черный ящик» JVM</a>, JPoint 2014</li>
+            <li><a href="https://www.youtube.com/watch?v=pH_NdoKd6Oc&amp;t=1849s">Андрей Паньгин — Лучший отладчик — сделанный своими руками</a>, Joker 2014</li>
+          <ul>
+          </ul>
+            <li><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/">Java SE 8 Troubleshooting Guide</a></li>
+            <li><a href="http://www.informit.com/store/java-performance-companion-9780133796827">Hunt, Beckwith, Parhar, Rutisson - "Java Performance Companion"</a>, Addison-Wesley, 2016</li>
+            <li><a href="http://docslide.us/documents/javamagazine20120708-dl.html">Poonam Bajaj, "HotSpot’s Hidden Treasure"</a>, Java Magazine, Jul/Aug 2012</li>
+            <li><a href="http://www.javamagazine.mozaicreader.com/JanFeb2017#&amp;pageSet=0&amp;page=0&amp;contentItem=0">Andrei Pangin, "Build yout own JVM debugging tools"</a>, Java Magazine, Jan/Feb 2017</li>
+            <li><a href="https://www.usenix.org/legacy/events/jvm01/full_papers/russell/russell_html/index.html">Kenneth Russell, Lars Bak, "The HotSpot™ Serviceability Agent"</a>,
+              <br/>JVM Research and Technology Symposium, 2001, Monterey</li>
+          </ul>
 
         </section>
 
