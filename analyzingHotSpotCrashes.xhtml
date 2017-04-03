@@ -380,6 +380,21 @@ org.simonis.Crash6
 
         <section style="height:100%" data-background="images/2015_Nepal_depremi_8.jpg">
           <!-- https://commons.wikimedia.org/wiki/File:2015_Nepal_depremi_(8).jpg -->
+          <div style="height:95%"></div>
+          <div style="height:5%">
+            <p><small><a href="https://commons.wikimedia.org/wiki/File:2015_Nepal_depremi_(8).jpg">
+                  https://commons.wikimedia.org/wiki/File:2015_Nepal_depremi_(8).jpg</a></small>
+            </p>
+          </div>
+        </section>
+
+
+        <section class="demo">
+
+          <h2>HotSpot VM Overview</h2>
+
+          <object data="images/adjusted/VM_Overview.svg" type="image/svg+xml"
+                  style="width: 90%;">&nbsp;</object>
         </section>
 
 
@@ -459,6 +474,23 @@ Current thread (0x00007fd0c0019800):  JavaThread "main" \
           </section>
 
           <section>
+            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Java Stack Trace</h2>
+
+            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
+j  <mark class="border">jdk.internal.misc.Unsafe.putInt(Ljava/lang/Object;JI)</mark>V+0 java.base@9-internal
+j  jdk.internal.misc.Unsafe.putInt(JI)V+4 java.base@9-internal
+j  sun.misc.Unsafe.putInt(JI)V+5 jdk.unsupported@9-internal
+j  <mark class="border">org.simonis.Crash.crash(I)</mark>V+7
+j  org.simonis.Crash.main([Ljava/lang/String;)V+2
+v  ~StubRoutines::call_stub
+              </code>
+            </pre>
+          </section>
+
+          <section>
             <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Native/Mixed Stack Trace</h2>
 
             <!-- the following data is from data/slide1/hs_err_pid4631.log -->
@@ -486,20 +518,22 @@ C  [libpthread.so.0+0x8182]  <span class="fragment highlight-border" data-fragme
           </section>
 
           <section>
-            <h2><code style="text-transform: none;">hs_err_pid4631.log</code> - Java Stack Trace</h2>
+            <h2>Crash in the Runtime</h2>
 
-            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
-            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
-              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
-Java frames: (J=compiled Java code, j=interpreted, Vv=VM code)
-j  jdk.internal.misc.Unsafe.putInt(Ljava/lang/Object;JI)V+0 java.base@9-internal
-j  <mark class="border">jdk.internal.misc.Unsafe.putInt(JI)</mark>V+4 java.base@9-internal
-j  <mark class="border">sun.misc.Unsafe.putInt(JI)</mark>V+5 jdk.unsupported@9-internal
-j  org.simonis.Crash.crash(I)V+7
-j  <mark class="border">org.simonis.Crash.main([Ljava/lang/String;)</mark>V+2
-v  ~StubRoutines::call_stub
-              </code>
-            </pre>
+                <div width="100%" style="position: relative; margin: 0 0 0 0px;">
+                  <div class="" style="position: static;">
+                    <object data="images/adjusted/VM_Overview.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="1" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashRuntime_1.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="2" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashRuntime_2.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                </div>
           </section>
 
           <section>
@@ -571,7 +605,7 @@ Instructions: (<span class="fragment highlight-border" data-fragment-index="1">p
 
             <pre class="big noshadow fragment" data-fragment-index="2" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
-<mark class="border">0x00007fd0c774a17a</mark>:   mov %eax,(%rdx)                                
+<mark class="border">0x00007fd0c774a17a</mark>:   mov %eax,(%rdx)  // %eax=0x42, %rdx=0x99       
 ...
               </code>
             </pre>
@@ -658,11 +692,11 @@ Instructions: (<span class="fragment highlight-border" data-fragment-index="1">p
             <div style="display:inline-block; text-align: left;">
               <p>Whenever the HotSpot VM encounters an irrevocable error like:</p>
               <ul>
-                <li>an unexpected signal</li>
+                <li>an <em style="text-decoration: underline;">unexpected</em> signal</li>
                 <li>a guarantee or assertion</li>
                 <li>a native "out of memory" situation</li>
               </ul>
-              <p>it calls <mark class="border"><code>VMError::report()</code></mark> which does the job!</p>
+              <p>it calls <code>VMError::report()</code> which does the job!</p>
             </div>
 
           </section>
@@ -825,17 +859,57 @@ Code:
           </section>
 
           <section>
-            <h2>Crash Location and Crash Reason</h2>
+            <h2>Crash in the Interpreter</h2>
+
+                <div width="100%" style="position: relative; margin: 0 0 0 0px;">
+                  <div class="" style="position: static;">
+                    <object data="images/adjusted/VM_Overview.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="1" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashInterpreter_1.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="2" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashInterpreter_2.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="3" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashInterpreter_3.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                </div>
+          </section>
+
+          <section>
+
+            <h2><a href="https://wiki.openjdk.java.net/display/HotSpot/PrintAssembly">The HotSpot Disassembler</a></h2>
 
             <ul>
-              <li>Crash location and crash reason can different</li>
-              <li>E.g. an error in the JIT can trigger an error in GC</li>
-              <li>E.g. an error in native code can trigger an error in the interpreter</li>
-              <li>Carefully analyzing the <code>hs_err</code> file can give hints to the root cause</li>
-              <li>Look for well known byte patterns and recent events like:<br/>
-                GC, deoptimization, class loading/redefinition, JIT compilation, exceptions, etc.</li>
+              <li>based on the <a href="https://www.gnu.org/software/binutils/">GNU Binutils Disassembler</a></li>
+              <li>used for: <code>-XX:+PrintAssembly</code>, <code>-XX:+PrintAssembly</code>, ... </li>
+              <li>located under <code>hotspot/src/share/tools/hsdis</code></li>
             </ul>
+
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+$ cd /tmp/
+$ wget http:&#x2215;&#x2215;ftp.gnu.org/gnu/binutils/binutils-2.28.tar.gz
+$ tar -xzf binutils-2.28.tar.gz
+$ cd /OpenJDK/jdk9-dev/hotspot/src/share/tools/hsdis
+$ BINUTILS=/tmp/binutils-2.28 make all64
+...
+$ ll build/linux-amd64/hsdis-amd64.so
+-rwxrwxr-x 1 ojdk ojdk 2371436 Apr  3 18:30 build/linux-amd64/<mark class="border">hsdis-amd64.so</mark>
+$ export LD_LIBRARY_PATH=`pwd`/build/linux-amd64
+$ java -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly
+Loaded disassembler from <mark class="border">hsdis-amd64.so</mark>
+[Disassembling for mach='i386:x86-64']
+...
+              </code>
+            </pre>
           </section>
+
         </section>
 
 
@@ -1134,6 +1208,25 @@ V  [libjvm.so+0x123d762]  compiler_thread_entry(JavaThread*, Thread*)+0x85
             </pre>
           </section>
 
+          <section>
+            <h2>Crash in the Compiler</h2>
+
+                <div width="100%" style="position: relative; margin: 0 0 0 0px;">
+                  <div class="" style="position: static;">
+                    <object data="images/adjusted/VM_Overview.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="1" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashCompiler_1.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="2" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashCompiler_2.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                </div>
+          </section>
+
           <section class="demo">
 
             <h2><code style="text-transform: none;">-XX:+ReplayCompiles</code></h2>
@@ -1386,6 +1479,60 @@ Resolving klass org/simonis/Crash6$X at 33
 
 
         <section>
+          <section>
+            <h2>Crash Location and Crash Reason</h2>
+
+                <div width="100%" style="position: relative; margin: 0 0 0 0px;">
+                  <div class="" style="position: static;">
+                    <object data="images/adjusted/VM_Overview.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="1" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashLocationReason_1.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="2" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashLocationReason_2.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="3" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashLocationReason_3.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="4" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashLocationReason_4.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="5" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashLocationReason_5.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="6" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashLocationReason_6.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                  <div class="fragment" data-fragment-index="7" style="position: absolute; left: 0; top: 0; width: 100%">
+                    <object data="images/adjusted/CrashLocationReason_7.svg" type="image/svg+xml"
+                            style="width: 90%;">&nbsp;</object>
+                  </div>
+                </div>
+          </section>
+
+          <section>
+            <h2>Crash Location and Crash Reason</h2>
+
+            <ul>
+              <li>Crash location and crash reason can different</li>
+              <li>E.g. an error in the JIT can trigger an error in GC</li>
+              <li>E.g. an error in native code can trigger an error in the interpreter</li>
+              <li>Carefully analyzing the <code>hs_err</code> file can give hints to the root cause</li>
+              <li>Look for well known byte patterns and recent events like:<br/>
+                GC, deoptimization, class loading/redefinition, JIT compilation, exceptions, etc.</li>
+            </ul>
+          </section>
+        </section>
+
+        <section>
 
           <h2>Further reading</h2>
 
@@ -1398,9 +1545,9 @@ Resolving klass org/simonis/Crash6$X at 33
             <li><a href="https://docs.oracle.com/javase/8/docs/technotes/guides/troubleshoot/">Java SE 8 Troubleshooting Guide</a></li>
             <li><a href="http://www.informit.com/store/java-performance-companion-9780133796827">Hunt, Beckwith, Parhar, Rutisson - "Java Performance Companion"</a>, Addison-Wesley, 2016</li>
             <li><a href="http://docslide.us/documents/javamagazine20120708-dl.html">Poonam Bajaj, "HotSpot’s Hidden Treasure"</a>, Java Magazine, Jul/Aug 2012</li>
-            <li><a href="http://www.javamagazine.mozaicreader.com/JanFeb2017#&amp;pageSet=0&amp;page=0&amp;contentItem=0">Andrei Pangin, "Build yout own JVM debugging tools"</a>, Java Magazine, Jan/Feb 2017</li>
+            <li><a href="http://www.javamagazine.mozaicreader.com/JanFeb2017#&amp;pageSet=0&amp;page=0&amp;contentItem=0">Andrei Pangin, "Build your own JVM debugging tools"</a>, Java Magazine, Jan/Feb 2017</li>
             <li><a href="https://www.usenix.org/legacy/events/jvm01/full_papers/russell/russell_html/index.html">Kenneth Russell, Lars Bak, "The HotSpot™ Serviceability Agent"</a>,
-              <br/>JVM Research and Technology Symposium, 2001, Monterey</li>
+              <br/>JVM Research and Technology Symposium, 2001, Monterrey</li>
           </ul>
 
         </section>
@@ -1505,9 +1652,13 @@ hljs.initHighlightingOnLoad(); } },
  -->
 <!--  LocalWords:  PrintOptoAssembly DoEscapeAnalysis arraycopy alloc
  -->
-<!--  LocalWords:  PrintEscapeAnalysis PrintEliminateAllocations
+<!--  LocalWords:  PrintEscapeAnalysis PrintEliminateAllocations Bak
  -->
 <!--  LocalWords:  IndexOutOfBoundsException ArrayCopy ArrayCopyNode
  -->
-<!--  LocalWords:  AllocateArrayNode
+<!--  LocalWords:  AllocateArrayNode Disassembler Binutils Pangin
+ -->
+<!--  LocalWords:  RigaDevDay JPoint Beckwith Parhar Rutisson Poonam
+ -->
+<!--  LocalWords:  Bajaj
  -->
