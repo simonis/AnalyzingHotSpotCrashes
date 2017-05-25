@@ -1,0 +1,7 @@
+java -Xbatch -XX:-DoEscapeAnalysis -Djdk.attach.allowAttachSelf org.simonis.Crash6
+java -XX:+ReplayCompiles -XX:-DoEscapeAnalysis -XX:ReplayDataFile=replay_pid31451.log
+java -XX:+ReplayCompiles -XX:-DoEscapeAnalysis -XX:+ReplayIgnoreInitErrors -XX:ReplayDataFile=replay_pid31451.log
+java -XX:+ReplayCompiles -XX:-DoEscapeAnalysis -XX:+ReplayIgnoreInitErrors -XX:+PrintCompilation -XX:ReplayDataFile=replay_pid31451.log
+jhsdb clhsdb
+ll *.jar
+java -XX:+ReplayCompiles -XX:-DoEscapeAnalysis -XX:+ReplayIgnoreInitErrors -cp app.jar -XX:ReplayDataFile=replay_pid31451.log

@@ -116,6 +116,20 @@ mark.border {
     border: 5px solid #1B91FF;
     border-radius: 10px;
 }
+mark.border-no-top {
+    color: inherit;
+    background-color: inherit;
+    border: 5px solid #1B91FF;
+    border-width: 0px 5px 5px 5px;
+    border-radius: 0px 0px 10px 10px;
+}
+mark.border-no-bottom {
+    color: inherit;
+    background-color: inherit;
+    border: 5px solid #1B91FF;
+    border-width: 5px 5px 0px 5px;
+    border-radius: 10px 10px 0px 0px;
+}
 
 .reveal .slides section .fragment.highlight-border, .reveal .slides section .fragment.highlight-current-border {
   opacity: 1;
@@ -300,7 +314,16 @@ mark.border {
 
 <!--
 
+For JEEConf 2017
+================
+from /media/sf_C_DRIVE/Users/D046063/public_html/hotspot/JEE2017/git/examples do:
 
+/share/software/Java/jdk1.8.0_66/bin/javac -cp /share/output-jdk8u-dbg/images/j2sdk-image/lib/sa-jdi.jar:/share/output-jdk8u-dbg/images/j2sdk-image/lib/tools.jar -d bin/ src/org/simonis/Crash.java src/org/simonis/CrashInt.java src/org/simonis/CrashOOM.java src/org/simonis/Crash5.java src/org/simonis/Crash6.java src/org/simonis/Crash6.java src/org/simonis/SADemo.java
+
+/share/output-jdk9-dev-dbg/images/jdk/bin/javac - -add-modules jdk.hotspot.agent - -add-exports jdk.hotspot.agent/sun.jvm.hotspot.classfile=ALL-UNNAMED - -add-exports jdk.hotspot.agent/sun.jvm.hotspot.oops=ALL-UNNAMED - -add-exports jdk.hotspot.agent/sun.jvm.hotspot.runtime=ALL-UNNAMED - -add-exports jdk.hotspot.agent/sun.jvm.hotspot.tools=ALL-UNNAMED -d bin src/org/simonis/ClassStatistics.java
+
+JBreak2017 (and before) comments:
+=================================
 State of /share/OpenJDK/jdk9-dev before we started with JBreak2017:
 
 simonis@simonis:/share/OpenJDK/jdk9-dev$ bash common/bin/hgforest.sh id
@@ -424,7 +447,7 @@ $ java -Xmx20m org.simonis.Crash
 # Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/core.4631</span>
 #
 # An error report file with more information is saved as:
-# <span class="fragment highlight-border">/tmp/JBreak2017_crash/hs_err_pid4631.log</span>
+# <span class="fragment highlight-border">/tmp/JEE2017_crash/hs_err_pid4631.log</span>
 
 $</span><span class="fragment"> ulimit -c
 0                                      // No core file will be written
@@ -508,9 +531,9 @@ Stack: [0x00007fd0c8fa0000,0x00007fd0c90a0000],  sp=0x00007fd0c909e500,  free sp
 Native frames: (J=compiled Java code, A=aot compiled Java code, j=interpreted, Vv=VM code, C=native code)
 V  [libjvm.so+0x127917a]  void <span class="fragment highlight-border" data-fragment-index="5">MemoryAccess::put&lt;int&gt;(int)</span>+0x62
 V  [libjvm.so+0x1270574]  Unsafe_PutInt+0x174
-j  jdk.internal.misc.Unsafe.putInt(Ljava/lang/Object;JI)V+0 java.base@9-internal
+j  <span class="fragment highlight-border" data-fragment-index="3">jdk.internal.misc.Unsafe.putInt(Ljava/lang/Object;JI)</span>V+0 java.base@9-internal
 j  jdk.internal.misc.Unsafe.putInt(JI)V+4 java.base@9-internal
-j  <span class="fragment highlight-border" data-fragment-index="5">sun.misc.Unsafe.putInt(JI)</span>V+5 jdk.unsupported@9-internal
+j  sun.misc.Unsafe.putInt(JI)V+5 jdk.unsupported@9-internal
 j  org.simonis.Crash.crash(I)V+7
 j  <span class="fragment highlight-border" data-fragment-index="3">org.simonis.Crash.main([Ljava/lang/String;)</span>V+2
 v  ~StubRoutines::call_stub
@@ -619,133 +642,6 @@ Instructions: (<span class="fragment highlight-border" data-fragment-index="1">p
             </pre>
           </section>
 
-        </section>
-
-        <section class="demo">
-
-          <section class="demo">
-
-            <h2>Generating <code style="text-transform: none;">hs_err.log</code> Files</h2>
-
-<table class="calling_hirarchy">
-  <tr>
-    <td colspan="6" class="functionCall  indent_level_3">
-      <code>&lt;signal handler&gt;</code>
-    </td>
-  </tr>
-  <tr>
-    <td rowspan="11">&nbsp;</td>
-    <td colspan="5" class="functionCall  indent_level_4">
-    <code>signalHandler(sig=11, info=0x7ffff7fda070, uc=0x7ffff7fd9f40)</code>
-    </td>
-  </tr>
-  <tr>
-    <td rowspan="10">&nbsp;</td>
-    <td colspan="4" class="functionCall  indent_level_5">
-    <code>JVM_handle_linux_signal(sig=11, info=0x7ffff7fda070, <span class="fragment highlight-border">abort_if_unrecognized=1)</span></code>
-    </td>
-  </tr>
-  <tr>
-    <td rowspan="9">&nbsp;</td>
-    <td colspan="3" class="functionCall  indent_level_6">
-    <code>VMError::report_and_die(sig=11, pc=0x7ffff668a17a &lt;MemoryAccess::put&gt;)</code>
-    </td>
-  </tr>
-  <tr>
-    <td rowspan="8">&nbsp;</td>
-    <td colspan="2" class="functionCall  indent_level_7">
-    <code><span class="fragment highlight-border">VMError::report</span>(stream=0x7ffff71aa9e0 &lt;VMError::log&gt;, _verbose=true)</code>
-    </td>
-  </tr>
-  <tr>
-    <td rowspan="7">&nbsp;</td>
-    <td colspan="1" class="functionCall  indent_level_8">
-    <code>print_native_stack(...)</code>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="1" class="functionCall  indent_level_8">
-      <code>print_stack_trace(...)</code>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="1" class="functionCall  indent_level_8">
-      <code>os::print_register_info(...)</code>
-    </td>
-  </tr>
-<!--
-  <tr>
-    <td colspan="1" class="functionCall  indent_level_8">
-      <code>Universe::heap()-&gt;print_on_error(...)</code>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="1" class="functionCall  indent_level_8">
-      <code>os::print_dll_info(...)</code>
-    </td>
-  </tr>
-  <tr>
-    <td colspan="1" class="functionCall  indent_level_8">
-      <code>Arguments::print_on(...)</code>
-    </td>
-  </tr>
--->
-  <tr>
-    <td colspan="1" class="functionCall  indent_level_8">
-      <code>...</code>
-    </td>
-  </tr>
-</table>
-
-            <div style="display:inline-block; text-align: left;">
-              <p>Whenever the HotSpot VM encounters an irrevocable error like:</p>
-              <ul>
-                <li>an <em style="text-decoration: underline;">unexpected</em> signal</li>
-                <li>a guarantee or assertion</li>
-                <li>a native "out of memory" situation</li>
-              </ul>
-              <p>it calls <code>VMError::report()</code> which does the job!</p>
-            </div>
-
-          </section>
-
-
-          <section class="demo">
-
-            <h2>Generating <code style="text-transform: none;">hs_err</code> Files</h2>
-
-            <div style="display:inline-block; width:90%; text-align: left;">
-              <p>Creating the <code>hs_err</code> file is not trivial:</p>
-              <ul>
-                <li>the VM is in an inconsistent state</li>
-                <li>the VM may run out of native memory / stack space</li>
-                <li>the internal data structures may be corrupted</li>
-                <li>have to gracefully handle subsequent signals/assertions/guarantees and timeouts!</li>
-              </ul>
-            </div>
-
-            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
-            <!-- see data/slide1/hs_err_pid6275.log for the same example running with -XX:-UseCompressedOops which doesn't produce an error during error reporting -->
-            <pre class="fragment big noshadow" data-trim="true">
-              <code class="terminal" data-trim="true" data-noescape="true">
-Register to memory mapping:
-RAX=0x0000000000000042 is an unknown value
-RBX={method} {0x00007fd0798abc98} jdk/internal/misc/Unsafe.putInt()
-RCX=0x00007fd0c0019800 is a thread
-RDX=0x0000000000000099 is an unknown value
-R9 =
-<span class="fragment highlight-border">[error occurred during error reporting (printing register info), id 0xb]</span>
-              </code>
-            </pre>
-            <div style="display:inline-block; width:90%; text-align: left;">
-              <ul>
-                <span class="fragment"><li>use <a href="https://rawgit.com/simonis/hotspot_internals/master/hotspot_internals.xhtml#/1/8"><code>SafeFetch</code></a>
-                    (see <a href="https://rawgit.com/simonis/hotspot_internals/master/hotspot_internals.xhtml">"HotSpot Internals"</a> from
-                    <a href="http://2016.jokerconf.com/">Joker 2016</a>)</li></span>
-              </ul>
-            </div>
-
-          </section>
         </section>
 
 
@@ -889,35 +785,6 @@ Code:
                 </div>
           </section>
 
-          <section>
-
-            <h2><a href="https://wiki.openjdk.java.net/display/HotSpot/PrintAssembly">The HotSpot Disassembler</a></h2>
-
-            <ul>
-              <li>based on the <a href="https://www.gnu.org/software/binutils/">GNU Binutils Disassembler</a></li>
-              <li>used for: <code>-XX:+PrintAssembly</code>, <code>-XX:+PrintAssembly</code>, ... </li>
-              <li>located under <code>hotspot/src/share/tools/hsdis</code></li>
-            </ul>
-
-            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
-              <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
-$ cd /tmp/
-$ wget http:&#x2215;&#x2215;ftp.gnu.org/gnu/binutils/binutils-2.28.tar.gz
-$ tar -xzf binutils-2.28.tar.gz
-$ cd /OpenJDK/jdk9-dev/hotspot/src/share/tools/hsdis
-$ BINUTILS=/tmp/binutils-2.28 make all64
-...
-$ ll build/linux-amd64/hsdis-amd64.so
--rwxrwxr-x 1 ojdk ojdk 2371436 Apr  3 18:30 build/linux-amd64/<mark class="border">hsdis-amd64.so</mark>
-$ export LD_LIBRARY_PATH=`pwd`/build/linux-amd64
-$ java -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly
-Loaded disassembler from <mark class="border">hsdis-amd64.so</mark>
-[Disassembling for mach='i386:x86-64']
-...
-              </code>
-            </pre>
-          </section>
-
         </section>
 
 
@@ -956,10 +823,10 @@ Aborting due to java.lang.OutOfMemoryError: Metaspace
 #
 #  fatal error: OutOfMemory encountered: Metaspace
 #
-# Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/JBreak2017_crash_oom/core</span>
+# Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/JEE2017_crash_oom/core</span>
 #
 # An error report file with more information is saved as:
-# <span class="fragment highlight-border">/tmp/JBreak2017_crash_oom/hs_err_pid23919.log</span>
+# <span class="fragment highlight-border">/tmp/JEE2017_crash_oom/hs_err_pid23919.log</span>
               </code>
             </pre>
           </section>
@@ -1073,18 +940,18 @@ Event: 1,465 Thread 0x00007f4150019800 Exception a 'java/lang/LinkageError':
 public class ClassStatistics  extends <mark class="border">sun.jvm.hotspot.tools.Tool</mark> {
   public void run() {
     <span class="fragment highlight-border" data-fragment-index="1">ClassLoaderDataGraph</span> cldg = <span class="fragment highlight-border" data-fragment-index="1">VM.getVM().getClassLoaderDataGraph()</span>;
-    for (ClassLoaderData cld =
+
+    for (<span class="fragment highlight-border" data-fragment-index="2">ClassLoaderData</span> cld =
            <span class="fragment highlight-border" data-fragment-index="2">cldg.getClassLoaderGraphHead()</span>; cld != null; cld = cld.next()) {
-      for (Klass k = cld.getKlasses(); k != null; k = k.getNextLinkKlass()) {
+
+      for (<span class="fragment highlight-border" data-fragment-index="3">Klass</span> k = cld.getKlasses(); k != null; k = k.getNextLinkKlass()) {
         if (<span class="fragment highlight-border" data-fragment-index="3">k instanceof InstanceKlass</span>) {
           InstanceKlass ik = (InstanceKlass)k;
           Oop cl = ik.getClassLoader();
           System.out.println(k.getName().asString() + " (" +
               (cl == null ? "null" : cl.getKlass().getName().asString()) + ")");
-        }
-      }
-    }
-  }
+      ...
+
   public static void main(String[] args) {
     ClassStatistics cs = new ClassStatistics();
     cs.execute(args);
@@ -1095,7 +962,7 @@ public class ClassStatistics  extends <mark class="border">sun.jvm.hotspot.tools
 
           <section>
 
-            <h2>Out of Memory - <code style="text-transform: none;">hs_err_pid23919.log</code></h2>
+            <h2>Out of Memory - Serviceability Agent</h2>
 
             <!-- the following data is from data/slide3/hs_err_pid23919.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
@@ -1108,11 +975,11 @@ JVM version is 9-internal+0-adhoc.simonis.jdk9-dev
 org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
 org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
 org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
-org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
-org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
-org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
-org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
 ...
+org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
+org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
+org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
+org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
 $ </span><span class="fragment">java --add-modules jdk.hotspot.agent --add-exports .. \
     org.simonis.ClassStatistics /output-jdk9-dev-dbg/images/jdk/bin/java core \
     | grep CrashOOM | wc</span>
@@ -1176,13 +1043,13 @@ $ java -Xbatch -XX:-DoEscapeAnalysis org.simonis.Crash5
 # Problematic frame:
 # V  [libjvm.so+0xeca35d]  <mark class="border">PhaseMacroExpand::generate_arraycopy</mark>(...)+0x65b
 #
-# Core dump will be written. Default location: <span class="fragment highlight-border" data-fragment-index="3">/tmp/core.31451</span>
+# Core dump will be written. Default location: <span class="fragment highlight-border" data-fragment-index="2">/tmp/core.31451</span>
 #
 # An error report file with more information is saved as:
-# <span class="fragment highlight-border" data-fragment-index="3">/tmp/hs_err_pid31451.log</span>
+# <span class="fragment highlight-border" data-fragment-index="2">/tmp/hs_err_pid31451.log</span>
 #
 # Compiler replay data is saved as:
-# <span class="fragment highlight-border" data-fragment-index="2">/tmp/replay_pid31451.log</span></span>
+# <span class="fragment highlight-border" data-fragment-index="3">/tmp/replay_pid31451.log</span></span>
               </code>
             </pre>
           </section>
@@ -1279,7 +1146,7 @@ Breakpoint 1, 0x00007ffff62db35d in PhaseMacroExpand::generate_arraycopy (...) \
            at /OpenJDK/jdk9-dev/hotspot/src/share/vm/opto/macroArrayCopy.cpp:360
 360	        <mark class="border">*(int*)0 = 0xcafebabe</mark>;
 (gdb) </span><span class="fragment">list
-354   // Crash demo for JBreak/Jpoint
+354   // Crash demo for JEEConf
 355   ciKlass* k = _igvn.type(ac-&gt;in(ArrayCopyNode::DestKlass))-&gt;...-&gt;klass();
 356   if (k-&gt;is_array_klass()) {
 357     ciType* t = k-&gt;as_array_klass()-&gt;base_element_type();
@@ -1329,7 +1196,7 @@ public class Crash5 {
             <!-- the following data is from data/slide5/hs_err_pid480.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="">
-$ java -Xbatch -XX:-DoEscapeAnalysis org.simonis.Crash6
+$ java -XX:-DoEscapeAnalysis -Djdk.attach.allowAttachSelf org.simonis.Crash6
 <span class="fragment" data-fragment-index="1"># A fatal error has been detected by the Java Runtime Environment:
 #
 #  SIGSEGV (0xb) at pc=0x00007fe0254c735d, pid=480, tid=499
@@ -1339,10 +1206,10 @@ $ java -Xbatch -XX:-DoEscapeAnalysis org.simonis.Crash6
 # Problematic frame:
 # V  [libjvm.so+0xeca35d]  <mark class="border">PhaseMacroExpand::generate_arraycopy</mark>(...)+0x65b
 #
-# Core dump will be written. Default location: <span class="fragment highlight-border" data-fragment-index="3">/tmp/core.480</span>
+# Core dump will be written. Default location: /tmp/core.480
 #
 # An error report file with more information is saved as:
-# <span class="fragment highlight-border" data-fragment-index="3">/tmp/hs_err_pid480.log</span>
+# /tmp/hs_err_pid480.log
 #
 # Compiler replay data is saved as:
 # <span class="fragment highlight-border" data-fragment-index="2">/tmp/replay_pid480.log</span></span>
@@ -1444,8 +1311,8 @@ public class Crash6 {
     ...
     byte[] buf = getBytecodes("Crash6$A");
     for (int i = 0; i &lt; buf.length; i++) {
-      // Change 'new Y[1]' to 'new X[1]' in A.crash()
-      if (buf[i] == 'Y') buf[i] = 'X';
+      <mark class="border-no-bottom">// Change 'new Y[1]' to 'new X[1]' in A.crash()</mark>
+      <mark class="border-no-top"   >if (buf[i] == 'Y') buf[i] = 'X';               </mark>
     }
     <mark class="border">inst.redefineClasses(new ClassDefinition(A.class, buf))</mark>;
 
@@ -1568,6 +1435,163 @@ Resolving klass org/simonis/Crash6$X at 33
 
         </section>
 
+        <section class="demo">
+
+          <section class="demo">
+
+            <h2>Generating <code style="text-transform: none;">hs_err.log</code> Files</h2>
+
+<table class="calling_hirarchy">
+  <tr>
+    <td colspan="6" class="functionCall  indent_level_3">
+      <code>&lt;signal handler&gt;</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="11">&nbsp;</td>
+    <td colspan="5" class="functionCall  indent_level_4">
+    <code>signalHandler(sig=11, info=0x7ffff7fda070, uc=0x7ffff7fd9f40)</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="10">&nbsp;</td>
+    <td colspan="4" class="functionCall  indent_level_5">
+    <code>JVM_handle_linux_signal(sig=11, info=0x7ffff7fda070, <span class="fragment highlight-border">abort_if_unrecognized=1)</span></code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="9">&nbsp;</td>
+    <td colspan="3" class="functionCall  indent_level_6">
+    <code>VMError::report_and_die(sig=11, pc=0x7ffff668a17a &lt;MemoryAccess::put&gt;)</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="8">&nbsp;</td>
+    <td colspan="2" class="functionCall  indent_level_7">
+    <code><span class="fragment highlight-border">VMError::report</span>(stream=0x7ffff71aa9e0 &lt;VMError::log&gt;, _verbose=true)</code>
+    </td>
+  </tr>
+  <tr>
+    <td rowspan="7">&nbsp;</td>
+    <td colspan="1" class="functionCall  indent_level_8">
+    <code>print_native_stack(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>print_stack_trace(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>os::print_register_info(...)</code>
+    </td>
+  </tr>
+<!--
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>Universe::heap()-&gt;print_on_error(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>os::print_dll_info(...)</code>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>Arguments::print_on(...)</code>
+    </td>
+  </tr>
+-->
+  <tr>
+    <td colspan="1" class="functionCall  indent_level_8">
+      <code>...</code>
+    </td>
+  </tr>
+</table>
+
+            <div style="display:inline-block; text-align: left;">
+              <p>Whenever the HotSpot VM encounters an irrevocable error like:</p>
+              <ul>
+                <li>an <em style="text-decoration: underline;">unexpected</em> signal</li>
+                <li>a guarantee or assertion</li>
+                <li>a native "out of memory" situation</li>
+              </ul>
+              <p>it calls <code>VMError::report()</code> which does the job!</p>
+            </div>
+
+          </section>
+
+
+          <section class="demo">
+
+            <h2>Generating <code style="text-transform: none;">hs_err</code> Files</h2>
+
+            <div style="display:inline-block; width:90%; text-align: left;">
+              <p>Creating the <code>hs_err</code> file is not trivial:</p>
+              <ul>
+                <li>the VM is in an inconsistent state</li>
+                <li>the VM may run out of native memory / stack space</li>
+                <li>the internal data structures may be corrupted</li>
+                <li>have to gracefully handle subsequent signals/assertions/guarantees and timeouts!</li>
+              </ul>
+            </div>
+
+            <!-- the following data is from data/slide1/hs_err_pid4631.log -->
+            <!-- see data/slide1/hs_err_pid6275.log for the same example running with -XX:-UseCompressedOops which doesn't produce an error during error reporting -->
+            <pre class="fragment big noshadow" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true">
+Register to memory mapping:
+RAX=0x0000000000000042 is an unknown value
+RBX={method} {0x00007fd0798abc98} jdk/internal/misc/Unsafe.putInt()
+RCX=0x00007fd0c0019800 is a thread
+RDX=0x0000000000000099 is an unknown value
+R9 =
+<span class="fragment highlight-border">[error occurred during error reporting (printing register info), id 0xb]</span>
+              </code>
+            </pre>
+            <div style="display:inline-block; width:90%; text-align: left;">
+              <ul>
+                <span class="fragment"><li>use <a href="https://rawgit.com/simonis/hotspot_internals/master/hotspot_internals.xhtml#/1/8"><code>SafeFetch</code></a>
+                    (see <a href="https://rawgit.com/simonis/hotspot_internals/master/hotspot_internals.xhtml">"HotSpot Internals"</a> from
+                    <a href="http://2016.jokerconf.com/">Joker 2016</a>)</li></span>
+              </ul>
+            </div>
+
+          </section>
+
+        </section>
+
+        <section>
+
+          <h2><a href="https://wiki.openjdk.java.net/display/HotSpot/PrintAssembly">The HotSpot Disassembler</a></h2>
+
+          <ul>
+            <li>based on the <a href="https://www.gnu.org/software/binutils/">GNU Binutils Disassembler</a></li>
+            <li>used for: <code>-XX:+PrintAssembly</code>, <code>-XX:+PrintAssembly</code>, ... </li>
+            <li>located under <code>hotspot/src/share/tools/hsdis</code></li>
+          </ul>
+
+          <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+            <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
+$ cd /tmp/
+$ wget http:&#x2215;&#x2215;ftp.gnu.org/gnu/binutils/binutils-2.28.tar.gz
+$ tar -xzf binutils-2.28.tar.gz
+$ cd /OpenJDK/jdk9-dev/hotspot/src/share/tools/hsdis
+$ BINUTILS=/tmp/binutils-2.28 make all64
+...
+$ ll build/linux-amd64/hsdis-amd64.so
+-rwxrwxr-x 1 ojdk ojdk 2371436 Apr  3 18:30 build/linux-amd64/<mark class="border">hsdis-amd64.so</mark>
+$ export LD_LIBRARY_PATH=`pwd`/build/linux-amd64
+$ java -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly
+Loaded disassembler from <mark class="border">hsdis-amd64.so</mark>
+[Disassembling for mach='i386:x86-64']
+...
+            </code>
+          </pre>
+        </section>
+
       </div>
 
     </div>
@@ -1668,5 +1692,5 @@ hljs.initHighlightingOnLoad(); } },
  -->
 <!--  LocalWords:  RigaDevDay JPoint Beckwith Parhar Rutisson Poonam
  -->
-<!--  LocalWords:  Bajaj
+<!--  LocalWords:  Bajaj JEEConf
  -->

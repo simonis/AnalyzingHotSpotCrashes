@@ -18,6 +18,9 @@ else
 if [ "$1" == "crash_comp" ]; then
 export CLASSPATH=$CWD/bin
 else
+if [ "$1" == "crash_comp_redef" ]; then
+export CLASSPATH=$CWD/bin
+else
 if [ "$1" == "null_check_bench" ]; then
 export _JAVA_OPTIONS='-Xbatch -XX:+UseSerialGC -XX:-UseOnStackReplacement -XX:-TieredCompilation -XX:CICompilerCount=1 -XX:LoopUnrollLimit=0 -XX:-LogVMOutput'
 else
@@ -29,16 +32,18 @@ fi
 fi
 fi
 fi
+fi
 
 export LD_LIBRARY_PATH=/share/OpenJDK/hsdis
+ulimit -c unlimited
 
 #alias javac=/share/output-jdk9-hs-comp-opt/images/jdk/bin/javac
 alias javac=/share/software/Java/jdk-9-b154/bin/javac
 alias la='ls -la'
 
-rm -rf /tmp/JBreak2017_$1
-mkdir -p /tmp/JBreak2017_$1
-cd /tmp/JBreak2017_$1
+rm -rf /tmp/JEE2017_$1
+mkdir -p /tmp/JEE2017_$1
+cd /tmp/JEE2017_$1
 
 set -o history
 unset HISTFILE
