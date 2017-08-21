@@ -1,0 +1,86 @@
+# HG changeset patch
+# Parent d7da8c2b8b6cd4b96f72971a5f792d7a6a113a23
+JBreak/JPoint 2017 changes
+Summary: Backout 8173743: Failures during class definition can lead to memory leaks in metaspace
+
+diff -r d7da8c2b8b6c src/share/vm/classfile/systemDictionary.cpp
+--- a/src/share/vm/classfile/systemDictionary.cpp	Tue Apr 25 09:37:24 2017 +0200
++++ b/src/share/vm/classfile/systemDictionary.cpp	Wed May 24 15:57:18 2017 +0200
+@@ -1152,26 +1152,21 @@
+   Symbol* h_name = k->name();
+   assert(class_name == NULL || class_name == h_name, "name mismatch");
+ 
++  bool define_succeeded = false;
+   // Add class just loaded
+   // If a class loader supports parallel classloading handle parallel define requests
+   // find_or_define_instance_class may return a different InstanceKlass
+   if (is_parallelCapable(class_loader)) {
+-    instanceKlassHandle defined_k = find_or_define_instance_class(h_name, class_loader, k, THREAD);
+-    if (!HAS_PENDING_EXCEPTION && defined_k() != k()) {
+-      // If a parallel capable class loader already defined this class, register 'k' for cleanup.
+-      assert(defined_k.not_null(), "Should have a klass if there's no exception");
+-      loader_data->add_to_deallocate_list(k());
+-      k = defined_k;
++    instanceKlassHandle defined_k = find_or_define_instance_class(h_name, class_loader, k, CHECK_NULL);
++    if (k() == defined_k()) {
++      // we have won over other concurrent threads (if any) that are
++      // competing to define the same class.
++      define_succeeded = true;
+     }
++    k = defined_k;
+   } else {
+-    define_instance_class(k, THREAD);
+-  }
+-
+-  // If defining the class throws an exception register 'k' for cleanup.
+-  if (HAS_PENDING_EXCEPTION) {
+-    assert(k.not_null(), "Must have an instance klass here!");
+-    loader_data->add_to_deallocate_list(k());
+-    return NULL;
++    define_instance_class(k, CHECK_NULL);
++    define_succeeded = true;
+   }
+ 
+   // Make sure we have an entry in the SystemDictionary on success
+@@ -1523,16 +1518,8 @@
+     // find_or_define_instance_class may return a different InstanceKlass
+     if (!k.is_null()) {
+       instanceKlassHandle defined_k =
+-        find_or_define_instance_class(class_name, class_loader, k, THREAD);
+-      if (!HAS_PENDING_EXCEPTION && defined_k() != k()) {
+-        // If a parallel capable class loader already defined this class, register 'k' for cleanup.
+-        assert(defined_k.not_null(), "Should have a klass if there's no exception");
+-        loader_data->add_to_deallocate_list(k());
+-        k = defined_k;
+-      } else if (HAS_PENDING_EXCEPTION) {
+-        loader_data->add_to_deallocate_list(k());
+-        return nh;
+-      }
++        find_or_define_instance_class(class_name, class_loader, k, CHECK_(nh));
++      k = defined_k;
+     }
+     return k;
+   } else {
+diff -r d7da8c2b8b6c src/share/vm/opto/macroArrayCopy.cpp
+--- a/src/share/vm/opto/macroArrayCopy.cpp	Tue Apr 25 09:37:24 2017 +0200
++++ b/src/share/vm/opto/macroArrayCopy.cpp	Wed May 24 15:57:18 2017 +0200
+@@ -349,6 +349,19 @@
+   Node* checked_i_o     = NULL;
+   Node* checked_value   = NULL;
+ 
++
++  {
++    // Crash demo for JEEConf
++    ciKlass* k = _igvn.type(ac->in(ArrayCopyNode::DestKlass))->is_klassptr()->klass();
++    if (k->is_array_klass()) {
++      ciType* t = k->as_array_klass()->base_element_type();
++      if (strcmp(t->name(), "org/simonis/Crash5$X") == 0 ||
++          strcmp(t->name(), "org/simonis/Crash6$X") == 0) {
++        *(int*)0 = 0xcafebabe;
++      }
++    }
++  }
++
+   if (basic_elem_type == T_CONFLICT) {
+     assert(!dest_uninitialized, "");
+     Node* cv = generate_generic_arraycopy(ctrl, &mem,
