@@ -114,34 +114,65 @@ mark.border {
     color: inherit;
     background-color: inherit;
     border: 5px solid #1B91FF;
+    /* Use a negative margin with the same size as the border to avoid size changes of elemnts with borders or when the border is set dynamically by fragments */
+    margin: 0 -5px 0 -5px;
     border-radius: 10px;
 }
 mark.border-no-top {
     color: inherit;
     background-color: inherit;
-    border: 5px solid #1B91FF;
+    margin: 0 -5px 0 -5px;
+    border-style: solid;
+    border-color: #1B91FF;
     border-width: 0px 5px 5px 5px;
     border-radius: 0px 0px 10px 10px;
 }
 mark.border-no-bottom {
     color: inherit;
     background-color: inherit;
-    border: 5px solid #1B91FF;
+    margin: 0 -5px 0 -5px;
+    border-style: solid;
+    border-color: #1B91FF;
     border-width: 5px 5px 0px 5px;
     border-radius: 10px 10px 0px 0px;
 }
 
-.reveal .slides section .fragment.highlight-border, .reveal .slides section .fragment.highlight-current-border {
+.reveal .slides section .fragment.highlight-border, .reveal .slides section .fragment.highlight-current-border,
+.reveal .slides section .fragment.highlight-border-no-top, .reveal .slides section .fragment.highlight-current-border-no-top,
+.reveal .slides section .fragment.highlight-border-no-bottom, .reveal .slides section .fragment.highlight-current-border-no-bottom {
   opacity: 1;
   visibility: visible;
+  /* Define a transparent border with the same size for inactive fragments such that we have no size changes when the fragments get displayed */
+  border-width: 5px 5px 5px 5px;
+  border-style: solid;
+  border-color: transparent;
+  /* Use a negative margin with the same size as the border to avoid size changes of elemnts with borders or when the border is set dynamically by fragments */
+  margin: -5px;
 }
 .reveal .slides section .fragment.highlight-border.visible {
   border: 5px solid #1B91FF;
   border-radius: 10px;
+  margin: 5px -5px 5px -5px;
+  margin: -5px;
+}
+.reveal .slides section .fragment.highlight-border-no-top.visible {
+  border: 5px solid #1B91FF;
+  border: 5px solid #1B91FF;
+  border-width: 0px 5px 5px 5px;
+  border-radius: 0px 0px 10px 10px;
+  margin: -5px;
+}
+.reveal .slides section .fragment.highlight-border-no-bottom.visible {
+  border: 5px solid #1B91FF;
+  border: 5px solid #1B91FF;
+  border-width: 5px 5px 0px 5px;
+  border-radius: 10px 10px 0px 0px;
+  margin: -5px;
 }
 .reveal .slides section .fragment.highlight-current-border.current-fragment {
   border: 5px solid #1B91FF;
   border-radius: 10px;
+  margin: -5px;
 }
   table.calling_hirarchy {
 /*    font-family: monospace, arial, helvetica, sans-serif; */
@@ -444,10 +475,10 @@ $ java -Xmx20m org.simonis.Crash
 # Problematic frame:
 # V  [libjvm.so+0x127917a]  void <span class="fragment highlight-border">MemoryAccess::put&lt;int&gt;(int)+0x62</span>
 #
-# Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/core.4631</span>
+# Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/JavaOne2017_crash/core.4631</span>
 #
 # An error report file with more information is saved as:
-# <span class="fragment highlight-border">/tmp/JEE2017_crash/hs_err_pid4631.log</span>
+# <span class="fragment highlight-border">/tmp/JavaOne2017_crash/hs_err_pid4631.log</span>
 
 $</span><span class="fragment"> ulimit -c
 0                                      // No core file will be written
@@ -796,13 +827,12 @@ Code:
 
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
-$ java -Xmx20m -XX:MaxMetaspaceSize=6m org.simonis.CrashOOM
-<span class="fragment">Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
+Exception in thread "main" java.lang.OutOfMemoryError: Metaspace
 	at java.base/java.lang.ClassLoader.defineClass1(Native Method)
 	at java.base/java.lang.ClassLoader.defineClass(ClassLoader.java:986)
 	at org.simonis.CrashOOM$MyClassLoader.myDefineClass(CrashOOM.java:10)
 	at org.simonis.CrashOOM.crash(CrashOOM.java:30)
-	at org.simonis.CrashOOM.main(CrashOOM.java:40)</span>
+	at org.simonis.CrashOOM.main(CrashOOM.java:40)
               </code>
             </pre>
           </section>
@@ -813,8 +843,8 @@ $ java -Xmx20m -XX:MaxMetaspaceSize=6m org.simonis.CrashOOM
 
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
-$ java -Xmx20m -XX:MaxMetaspaceSize=6m <span class="fragment highlight-border">-XX:+CrashOnOutOfMemoryError</span> \
-                                          org.simonis.CrashOOM
+$ java <span class="fragment highlight-border">-XX:+CrashOnOutOfMemoryError</span> ...
+<span class="fragment">
 Aborting due to java.lang.OutOfMemoryError: Metaspace
 # To suppress the following error report, specify this argument
 # after -XX: or in .hotspotrc:  SuppressErrorAt=/debug.cpp:340
@@ -823,10 +853,10 @@ Aborting due to java.lang.OutOfMemoryError: Metaspace
 #
 #  fatal error: OutOfMemory encountered: Metaspace
 #
-# Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/JEE2017_crash_oom/core</span>
+# Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/JavaOne2017_crash_oom/core</span>
 #
 # An error report file with more information is saved as:
-# <span class="fragment highlight-border">/tmp/JEE2017_crash_oom/hs_err_pid23919.log</span>
+# <span class="fragment highlight-border">/tmp/JavaOne2017_crash_oom/hs_err_pid23919.log</span></span>
               </code>
             </pre>
           </section>
@@ -866,9 +896,9 @@ j  <span class="fragment highlight-current-border" data-fragment-index="1">org.s
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="">
 Events (10 events):
-Event: 1,269 <span class="fragment highlight-border" data-fragment-index="1">loading class org/simonis/CrashOOM$MyClassLoader</span>
+Event: 1,269 <span class="fragment highlight-current-border" data-fragment-index="1">loading class org/simonis/CrashOOM$MyClassLoader</span>
 Event: 1,269 loading class org/simonis/CrashOOM$MyClassLoader done
-Event: 1,464 Executing <span class="fragment highlight-border" data-fragment-index="2">VM operation: CollectForMetadataAllocation</span>
+Event: 1,464 Executing <span class="fragment highlight-current-border" data-fragment-index="2">VM operation: CollectForMetadataAllocation</span>
 Event: 1,714 Executing VM operation: CollectForMetadataAllocation done
 GC Heap History (6 events):
 Event: 1,465 GC heap before
@@ -937,19 +967,19 @@ Event: 1,465 Thread 0x00007f4150019800 Exception a 'java/lang/LinkageError':
             <!-- the following data is from data/slide3/hs_err_pid23919.log -->
             <pre class="big noshadow" style="margin: 0;" data-trim="true">
               <code class="java" data-trim="true" data-noescape="true" style="height:100%">
-public class ClassStatistics  extends <mark class="border">sun.jvm.hotspot.tools.Tool</mark> {
+public class ClassStatistics  extends <span class="fragment highlight-current-border" data-fragment-index="0">sun.jvm.hotspot.tools.Tool</span> {
   public void run() {
-    <span class="fragment highlight-border" data-fragment-index="1">ClassLoaderDataGraph</span> cldg = <span class="fragment highlight-border" data-fragment-index="1">VM.getVM().getClassLoaderDataGraph()</span>;
+    <span class="fragment highlight-current-border" data-fragment-index="1">ClassLoaderDataGraph</span> cldg = <span class="fragment highlight-current-border" data-fragment-index="1">VM.getVM().getClassLoaderDataGraph()</span>;
 
-    for (<span class="fragment highlight-border" data-fragment-index="2">ClassLoaderData</span> cld =
-           <span class="fragment highlight-border" data-fragment-index="2">cldg.getClassLoaderGraphHead()</span>; cld != null; cld = cld.next()) {
+    for (<span class="fragment highlight-current-border" data-fragment-index="2">ClassLoaderData</span> cld =
+           <span class="fragment highlight-current-border" data-fragment-index="2">cldg.getClassLoaderGraphHead()</span>; cld != null; cld = cld.next()) {
 
-      for (<span class="fragment highlight-border" data-fragment-index="3">Klass</span> k = cld.getKlasses(); k != null; k = k.getNextLinkKlass()) {
-        if (<span class="fragment highlight-border" data-fragment-index="3">k instanceof InstanceKlass</span>) {
+      for (<span class="fragment highlight-current-border" data-fragment-index="3">Klass</span> k = cld.getKlasses(); k != null; k = k.getNextLinkKlass()) {
+        if (<span class="fragment highlight-current-border" data-fragment-index="3">k instanceof InstanceKlass</span>) {
           InstanceKlass ik = (InstanceKlass)k;
           Oop cl = ik.getClassLoader();
-          System.out.println(k.getName().asString() + " (" +
-              (cl == null ? "null" : cl.getKlass().getName().asString()) + ")");
+          <span class="fragment highlight-current-border" data-fragment-index="4">System.out.println(k.getName().asString()</span> + " (" +
+              (cl == null ? "null" : <span class="fragment highlight-current-border" data-fragment-index="4">cl.getKlass().getName().asString()</span>) + ")");
       ...
 
   public static void main(String[] args) {
@@ -967,7 +997,7 @@ public class ClassStatistics  extends <mark class="border">sun.jvm.hotspot.tools
             <!-- the following data is from data/slide3/hs_err_pid23919.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="height:100%">
-$ java <mark class="border">--add-modules jdk.hotspot.agent</mark> <mark class="border">--add-exports ..</mark> \
+$ java <span class="fragment highlight-current-border" data-fragment-index="1">--add-modules jdk.hotspot.agent</span> <span class="fragment highlight-current-border" data-fragment-index="1">--add-exports ..</span> \
     org.simonis.ClassStatistics /output-jdk9-dev-dbg/images/jdk/bin/java core
 <span class="fragment">Debugger attached successfully.
 Server compiler detected.
@@ -983,7 +1013,7 @@ org/simonis/CrashOOM (org/simonis/CrashOOM$MyClassLoader)
 $ </span><span class="fragment">java --add-modules jdk.hotspot.agent --add-exports .. \
     org.simonis.ClassStatistics /output-jdk9-dev-dbg/images/jdk/bin/java core \
     | grep CrashOOM | wc</span>
-<span class="fragment">    320     640   18600</span>
+<span class="fragment">    <mark class="border">320</mark>     640   18600</span>
               </code>
             </pre>
           </section>
@@ -1028,28 +1058,27 @@ public class CrashOOM {
 
           <section class="demo">
 
-            <h2><code style="text-transform: none;">org.simonis.Crash5</code></h2>
+            <h2>Where did we crash?</h2>
 
             <!-- the following data is from data/slide4/hs_err_pid31451.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="">
-$ java -Xbatch -XX:-DoEscapeAnalysis org.simonis.Crash5
-<span class="fragment" data-fragment-index="1"># A fatal error has been detected by the Java Runtime Environment:
+# A fatal error has been detected by the Java Runtime Environment:
 #
 #  SIGSEGV (0xb) at pc=0x00007f8f33fab35d, pid=31451, tid=31469
 #
 # JRE version: OpenJDK Runtime Environment (9.0) (slowdebug build 9-internal...)
 # Java VM: OpenJDK 64-Bit Server VM (slowdebug 9-internal+0-adhoc.simonis...)
 # Problematic frame:
-# V  [libjvm.so+0xeca35d]  <mark class="border">PhaseMacroExpand::generate_arraycopy</mark>(...)+0x65b
+# V  [libjvm.so+0xeca35d]  <span class="fragment highlight-current-border" data-fragment-index="1">PhaseMacroExpand::generate_arraycopy</span>(...)+0x65b
 #
-# Core dump will be written. Default location: <span class="fragment highlight-border" data-fragment-index="2">/tmp/core.31451</span>
+# Core dump will be written. Default location: <span class="fragment highlight-current-border" data-fragment-index="2">/tmp/core.31451</span>
 #
 # An error report file with more information is saved as:
-# <span class="fragment highlight-border" data-fragment-index="2">/tmp/hs_err_pid31451.log</span>
+# <span class="fragment highlight-current-border" data-fragment-index="2">/tmp/hs_err_pid31451.log</span>
 #
 # Compiler replay data is saved as:
-# <span class="fragment highlight-border" data-fragment-index="3">/tmp/replay_pid31451.log</span></span>
+# <span class="fragment highlight-border" data-fragment-index="3">/tmp/replay_pid31451.log</span>
               </code>
             </pre>
           </section>
@@ -1146,7 +1175,7 @@ Breakpoint 1, 0x00007ffff62db35d in PhaseMacroExpand::generate_arraycopy (...) \
            at /OpenJDK/jdk9-dev/hotspot/src/share/vm/opto/macroArrayCopy.cpp:360
 360	        <mark class="border">*(int*)0 = 0xcafebabe</mark>;
 (gdb) </span><span class="fragment">list
-354   // Crash demo for JEEConf
+354   // Crash demo for JavaOne2017
 355   ciKlass* k = _igvn.type(ac-&gt;in(ArrayCopyNode::DestKlass))-&gt;...-&gt;klass();
 356   if (k-&gt;is_array_klass()) {
 357     ciType* t = k-&gt;as_array_klass()-&gt;base_element_type();
@@ -1170,7 +1199,7 @@ public class Crash5 {
 
   public static class A {
     public static void crash(Object src) {
-      System.arraycopy(src, 0, new X[1], 0, 1);
+      <span class="fragment highlight-border" data-fragment-index="1">System.arraycopy</span>(src, 0, <span class="fragment highlight-border" data-fragment-index="1">new X[1]</span>, 0, 1);
     }
   }
 
@@ -1191,20 +1220,19 @@ public class Crash5 {
 
           <section class="demo">
 
-            <h2><code style="text-transform: none;">org.simonis.Crash6</code></h2>
+            <h2>Where did we crash (2nd take)?</h2>
 
             <!-- the following data is from data/slide5/hs_err_pid480.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="">
-$ java -XX:-DoEscapeAnalysis -Djdk.attach.allowAttachSelf org.simonis.Crash6
-<span class="fragment" data-fragment-index="1"># A fatal error has been detected by the Java Runtime Environment:
+# A fatal error has been detected by the Java Runtime Environment:
 #
 #  SIGSEGV (0xb) at pc=0x00007fe0254c735d, pid=480, tid=499
 #
 # JRE version: OpenJDK Runtime Environment (9.0) (slowdebug build 9-internal...)
 # Java VM: OpenJDK 64-Bit Server VM (slowdebug 9-internal+0-adhoc.simonis...)
 # Problematic frame:
-# V  [libjvm.so+0xeca35d]  <mark class="border">PhaseMacroExpand::generate_arraycopy</mark>(...)+0x65b
+# V  [libjvm.so+0xeca35d]  <span class="fragment highlight-current-border" data-fragment-index="1">PhaseMacroExpand::generate_arraycopy</span>(...)+0x65b
 #
 # Core dump will be written. Default location: /tmp/core.480
 #
@@ -1212,7 +1240,36 @@ $ java -XX:-DoEscapeAnalysis -Djdk.attach.allowAttachSelf org.simonis.Crash6
 # /tmp/hs_err_pid480.log
 #
 # Compiler replay data is saved as:
-# <span class="fragment highlight-border" data-fragment-index="2">/tmp/replay_pid480.log</span></span>
+# <span class="fragment highlight-border" data-fragment-index="2">/tmp/replay_pid480.log</span>
+              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+
+            <h2><code style="text-transform: none;">hs_err_pid480.log</code></h2>
+
+            <!-- the following data is from data/slide4/hs_err_pid480.log -->
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="terminal" data-trim="true" data-noescape="true" style="">
+Command Line: <span class="fragment highlight-border" data-fragment-index="1">-Xbatch -XX:-DoEscapeAnalysis org.simonis.Crash6</span>
+...
+<span class="fragment highlight-border" data-fragment-index="2">Current thread</span> (0x00007f8f2c256000): <span class="fragment highlight-border" data-fragment-index="2">JavaThread "C2 CompilerThread1"</span> daemon ..
+...
+<span class="fragment highlight-border" data-fragment-index="3">Current CompileTask</span>:
+C2:   1436  116    b  4       <span class="fragment highlight-border" data-fragment-index="3">org.simonis.Crash6$A::crash</span> (14 bytes)
+...
+Stack: [0x00007f8ee4457000,0x00007f8ee4558000], sp=0x007f8ee4552630, free=1005k
+Native frames: (J=compiled, A=aot compiled, j=interpreted, Vv=VM code, C=native
+V  [libjvm.so+0xeca35d]  <span class="fragment highlight-border" data-fragment-index="4">PhaseMacroExpand::generate_arraycopy</span>(...)+0x65b
+V  [libjvm.so+0xece34e]  PhaseMacroExpand::expand_arraycopy_node(...)+0x8a8
+V  [libjvm.so+0xec6f59]  PhaseMacroExpand::expand_macro_nodes()+0x733
+V  [libjvm.so+0x90c023]  Compile::Optimize()+0xe37
+V  [libjvm.so+0x9048b2]  Compile::Compile(...)+0x11d2
+V  [libjvm.so+0x7a15d9]  C2Compiler::compile_method(...)+0x14d
+V  [libjvm.so+0x923173]  CompileBroker::invoke_compiler_on_method(...)+0x715
+V  [libjvm.so+0x922153]  CompileBroker::compiler_thread_loop()+0x2d3
+V  [libjvm.so+0x123d762]  compiler_thread_entry(JavaThread*, Thread*)+0x85
               </code>
             </pre>
           </section>
@@ -1224,7 +1281,7 @@ $ java -XX:-DoEscapeAnalysis -Djdk.attach.allowAttachSelf org.simonis.Crash6
             <!-- the following data is from data/slide5/hs_err_pid480.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="">
-$ java -XX:+ReplayCompiles -XX:-DoEscapeAnalysis \
+$ java -XX:+ReplayCompiles <span class="fragment highlight-current-border" data-fragment-index="1">-XX:-DoEscapeAnalysis</span> \
                            -XX:ReplayDataFile=/tmp/replay_pid480.log
 <span class="fragment">java.lang.NoClassDefFoundError: java/lang/invoke/LambdaForm$BMH
 Error while parsing line 37: java/lang/invoke/LambdaForm$BMH
@@ -1247,7 +1304,7 @@ Failed on java/lang/invoke/LambdaForm$BMH</span>
             <!-- the following data is from data/slide5/hs_err_pid480.log -->
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
               <code class="terminal" data-trim="true" data-noescape="true" style="">
-$ java -XX:+ReplayCompiles -XX:-DoEscapeAnalysis <mark class="border">-XX:+ReplayIgnoreInitErrors</mark> \
+$ java -XX:+ReplayCompiles -XX:-DoEscapeAnalysis <span class="fragment highlight-current-border" data-fragment-index="1">-XX:+ReplayIgnoreInitErrors</span> \
                            -XX:ReplayDataFile=/tmp/replay_pid480.log
 <span class="fragment">java.lang.NoClassDefFoundError: java/lang/invoke/LambdaForm$BMH
 Error while parsing line 37: java/lang/invoke/LambdaForm$BMH
@@ -1296,34 +1353,6 @@ Event: 10,755 loading class org/simonis/Crash6$X done
 
           <section class="demo">
 
-            <h2><code style="text-transform: none;">org.simonis.Crash6</code></h2>
-
-            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
-              <code class="java" data-trim="true" data-noescape="true" style="">
-public class Crash6 {
-  ...
-  public static class A {
-    public static void crash(Object src) {
-      System.arraycopy(src, 0, <mark class="border">new Y[1]</mark>, 0, 1);
-    }
-  }
-  public static void main(String[] args) throws Exception {
-    ...
-    byte[] buf = getBytecodes("Crash6$A");
-    for (int i = 0; i &lt; buf.length; i++) {
-      <mark class="border-no-bottom">// Change 'new Y[1]' to 'new X[1]' in A.crash()</mark>
-      <mark class="border-no-top"   >if (buf[i] == 'Y') buf[i] = 'X';               </mark>
-    }
-    <mark class="border">inst.redefineClasses(new ClassDefinition(A.class, buf))</mark>;
-
-    for (int i = 0; i &lt; 20_000; i++) {
-      A.crash(new Y[1]);
-              </code>
-            </pre>
-          </section>
-
-          <section class="demo">
-
             <h2>Serviceability Agent - Dump Classes from Core</h2>
 
             <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
@@ -1347,6 +1376,34 @@ Resolving klass org/simonis/Crash6$X at 33
 #
 # V  [libjvm.so+0xeca35d]  <mark class="border">PhaseMacroExpand::generate_arraycopy(...)</mark>+0x65b
 </span>              </code>
+            </pre>
+          </section>
+
+          <section class="demo">
+
+            <h2><code style="text-transform: none;">org.simonis.Crash6</code></h2>
+
+            <pre class="big noshadow" style="height:100%; margin: 0;" data-trim="true">
+              <code class="java" data-trim="true" data-noescape="true" style="">
+public class Crash6 {
+  ...
+  public static class A {
+    public static void crash(Object src) {                             
+      System.arraycopy(src, 0, <span class="fragment highlight-border" data-fragment-index="1">new Y[1]</span>, 0, 1); <span class="fragment" data-fragment-index="1">// was new X[1] before</span>
+    }
+  }
+  public static void main(String[] args) throws Exception {
+    ...
+    byte[] buf = getBytecodes("Crash6$A");
+    for (int i = 0; i &lt; buf.length; i++) {
+      <span class="fragment highlight-border-no-bottom" data-fragment-index="2">// Change 'new Y[1]' to 'new X[1]' in A.crash()</span>
+      <span class="fragment highlight-border-no-top" data-fragment-index="2">if (buf[i] == 'Y') buf[i] = 'X';               </span>
+    }
+    <span class="fragment highlight-border" data-fragment-index="3">inst.redefineClasses(new ClassDefinition(A.class, buf))</span>;
+
+    for (int i = 0; i &lt; 20_000; i++) {
+      A.crash(new Y[1]);
+              </code>
             </pre>
           </section>
 
@@ -1429,9 +1486,10 @@ Resolving klass org/simonis/Crash6$X at 33
 
         <section>
 
+
           <h3 style="text-transform: none;"><a href="https://github.com/simonis/AnalyzingHotSpotCrashes">https://github.com/simonis/AnalyzingHotSpotCrashes</a></h3>
 
-          <h3 style="text-transform: none;"><a href="https://rawgit.com/simonis/AnalyzingHotSpotCrashes/JEE/analyzingHotSpotCrashes.xhtml#/">https://rawgit.com/simonis/AnalyzingHotSpotCrashes/JEE/analyzingHotSpotCrashes.xhtml</a></h3>
+          <h3 style="text-transform: none;"><a href="https://simonis.github.io/JavaOne2017/analyzingHotSpotCrashes.xhtml">https://simonis.github.io/JavaOne2017/analyzingHotSpotCrashes.xhtml</a></h3>
 
         </section>
 
