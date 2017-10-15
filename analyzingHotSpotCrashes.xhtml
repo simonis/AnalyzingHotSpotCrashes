@@ -336,10 +336,10 @@ mark.border-no-bottom {
       <!-- Any section element inside of this container is displayed as a slide -->
       <div class="slides">
 
-        <section>
-          <h1>Analyzing HotSpot Crashes<br/></h1>
+        <section data-background="images/geecon_slide-01.jpg">
+          <h1 style="color:white; text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px  1px 0 #000, 1px  1px 0 #000;">Analyzing HotSpot Crashes<br/></h1>
           <p>
-            <small>Volker Simonis, SAP / <a href="mailto:volker.simonis@gmail.com">volker.simonis@gmail.com</a></small>
+            <small style="color:white; text-shadow: -.5px -.5px 0 #000, .5px -.5px 0 #000, -.5px  .5px 0 #000, .5px  .5px 0 #000;">Volker Simonis, SAP / <a  style="color:white;" href="mailto:volker.simonis@gmail.com">volker.simonis@gmail.com</a></small>
           </p>
         </section>
 
@@ -432,20 +432,20 @@ org.simonis.Crash6
         </section>
 -->
 
-        <section>
+        <section data-background="images/geecon_slide-04.jpg">
 
           <h3 style="text-transform: none;"><a href="https://github.com/simonis/AnalyzingHotSpotCrashes">https://github.com/simonis/AnalyzingHotSpotCrashes</a></h3>
 
-          <h3 style="text-transform: none;"><a href="https://simonis.github.io/JavaOne2017/analyzingHotSpotCrashes.xhtml">https://simonis.github.io/JavaOne2017/analyzingHotSpotCrashes.xhtml</a></h3>
+          <h3 style="text-transform: none;"><a href="https://simonis.github.io/GeeCON2017">https://simonis.github.io/GeeCON2017</a></h3>
 
         </section>
 
-        <section style="height:100%" data-background="images/2015_Nepal_depremi_8.jpg">
+        <section style="height:100%" data-background="images/PAY-The-house-in-Wolverhampton-where-a-gas-blast-destroyed-a-property-on-Penn-Road.jpg">
           <!-- https://commons.wikimedia.org/wiki/File:2015_Nepal_depremi_(8).jpg -->
           <div style="height:95%"></div>
           <div style="height:5%">
-            <p><small><a href="https://commons.wikimedia.org/wiki/File:2015_Nepal_depremi_(8).jpg">
-                  https://commons.wikimedia.org/wiki/File:2015_Nepal_depremi_(8).jpg</a></small>
+            <p><small><a href="(c) http://www.irishmirror.ie/news/world-news/pensioner-saved-washing-machine-after-7083330">
+                  (c) http://www.irishmirror.ie/news/world-news/pensioner-saved-washing-machine-after-7083330</a> / SWNS</small>
             </p>
           </div>
         </section>
@@ -475,10 +475,10 @@ $ java -Xmx20m org.simonis.Crash
 # Problematic frame:
 # V  [libjvm.so+0x127917a]  void <span class="fragment highlight-border">MemoryAccess::put&lt;int&gt;(int)+0x62</span>
 #
-# Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/JavaOne2017_crash/core.4631</span>
+# Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/GeeCON2017_crash/core.4631</span>
 #
 # An error report file with more information is saved as:
-# <span class="fragment highlight-border">/tmp/JavaOne2017_crash/hs_err_pid4631.log</span>
+# <span class="fragment highlight-border">/tmp/GeeCON2017_crash/hs_err_pid4631.log</span>
 
 $</span><span class="fragment"> ulimit -c
 0                                      // No core file will be written
@@ -853,10 +853,10 @@ Aborting due to java.lang.OutOfMemoryError: Metaspace
 #
 #  fatal error: OutOfMemory encountered: Metaspace
 #
-# Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/JavaOne2017_crash_oom/core</span>
+# Core dump will be written. Default location: <span class="fragment highlight-border">/tmp/GeeCON2017_crash_oom/core</span>
 #
 # An error report file with more information is saved as:
-# <span class="fragment highlight-border">/tmp/JavaOne2017_crash_oom/hs_err_pid23919.log</span></span>
+# <span class="fragment highlight-border">/tmp/GeeCON2017_crash_oom/hs_err_pid23919.log</span></span>
               </code>
             </pre>
           </section>
@@ -1175,7 +1175,7 @@ Breakpoint 1, 0x00007ffff62db35d in PhaseMacroExpand::generate_arraycopy (...) \
            at /OpenJDK/jdk9-dev/hotspot/src/share/vm/opto/macroArrayCopy.cpp:360
 360	        <mark class="border">*(int*)0 = 0xcafebabe</mark>;
 (gdb) </span><span class="fragment">list
-354   // Crash demo for JavaOne2017
+354   // Crash demo for GeeCON2017
 355   ciKlass* k = _igvn.type(ac-&gt;in(ArrayCopyNode::DestKlass))-&gt;...-&gt;klass();
 356   if (k-&gt;is_array_klass()) {
 357     ciType* t = k-&gt;as_array_klass()-&gt;base_element_type();
@@ -1484,12 +1484,11 @@ public class Crash6 {
 
         </section>
 
-        <section>
-
+        <section data-background="images/geecon_slide-04.jpg">
 
           <h3 style="text-transform: none;"><a href="https://github.com/simonis/AnalyzingHotSpotCrashes">https://github.com/simonis/AnalyzingHotSpotCrashes</a></h3>
 
-          <h3 style="text-transform: none;"><a href="https://simonis.github.io/JavaOne2017/analyzingHotSpotCrashes.xhtml">https://simonis.github.io/JavaOne2017/analyzingHotSpotCrashes.xhtml</a></h3>
+          <h3 style="text-transform: none;"><a href="https://simonis.github.io/GeeCON2017">https://simonis.github.io/GeeCON2017</a></h3>
 
         </section>
 
