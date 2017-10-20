@@ -1283,16 +1283,16 @@ V  [libjvm.so+0x123d762]  compiler_thread_entry(JavaThread*, Thread*)+0x85
               <code class="terminal" data-trim="true" data-noescape="true" style="">
 $ java -XX:+ReplayCompiles <span class="fragment highlight-current-border" data-fragment-index="1">-XX:-DoEscapeAnalysis</span> \
                            -XX:ReplayDataFile=/tmp/replay_pid480.log
-<span class="fragment">java.lang.NoClassDefFoundError: java/lang/invoke/LambdaForm$BMH
+<span class="fragment" data-fragment-index="2">java.lang.NoClassDefFoundError: java/lang/invoke/LambdaForm$BMH
 Error while parsing line 37: java/lang/invoke/LambdaForm$BMH
 
-java.lang.NoClassDefFoundError: java/lang/invoke/LambdaForm$BMH
+java.lang.NoClassDefFoundError: <span class="fragment highlight-border" data-fragment-index="3">java/lang/invoke/LambdaForm$BMH</span>
 Caused by: java.lang.ClassNotFoundException: java.lang.invoke.LambdaForm$BMH
 	at jdk.internal.loader.BuiltinClassLoader.loadClass(java.base@9-internal/BuiltinClassLoader.java:533)
 	at jdk.internal.loader.ClassLoaders$AppClassLoader.loadClass(java.base@9-internal/ClassLoaders.java:186)
 	at java.lang.ClassLoader.loadClass(java.base@9-internal/ClassLoader.java:476)
 
-Failed on java/lang/invoke/LambdaForm$BMH</span>
+<span class="fragment highlight-current-border" data-fragment-index="4">Failed on java/lang/invoke/LambdaForm$BMH</span></span>
               </code>
             </pre>
           </section>
